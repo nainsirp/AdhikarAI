@@ -37,7 +37,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-main);
   color: var(--charcoal);
-  background: var(--white);
+  background: var(--warm-gray);
   line-height: 1.6;
   overflow-x: hidden;
 }
@@ -57,7 +57,7 @@ ul { list-style: none; }
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba(255,255,255,0.98);
+  background: rgba(245,245,245,0.98);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   transition: box-shadow var(--transition);
@@ -194,7 +194,7 @@ ul { list-style: none; }
 /* ======================== HERO ======================== */
 .hero-wrapper {
   padding: 76px 24px 0; /* 60px navbar + 16px gap */
-  background: var(--white);
+  background: var(--warm-gray);
 }
 
 .hero {
@@ -289,7 +289,7 @@ ul { list-style: none; }
 /* ======================== TRUST BAR ======================== */
 .trust-bar {
   padding: 40px 0 52px;
-  background: var(--white);
+  background: var(--warm-gray);
 }
 .trust-card {
   max-width: 900px;
@@ -449,7 +449,7 @@ ul { list-style: none; }
 /* ======================== ABOUT THEM ======================== */
 .about-them-section {
   padding: 72px 0 88px;
-  background: var(--white);
+  background: var(--warm-gray);
 }
 .about-them-grid {
   display: grid;
@@ -500,8 +500,7 @@ ul { list-style: none; }
 /* ======================== FEATURES ======================== */
 .features-section {
   padding: 80px 0;
-  background: var(--white);
-  border-top: 1px solid var(--border);
+  background: var(--warm-gray);
 }
 .features-carousel-wrapper {
   display: flex;
