@@ -69,9 +69,9 @@ ul { list-style: none; }
   margin: 0 auto;
   padding: 0 28px;
   height: 60px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 0;
 }
 
 .nav-logo {
@@ -87,8 +87,8 @@ ul { list-style: none; }
 .nav-links {
   display: flex;
   gap: 28px;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
+  align-items: center;
 }
 .nav-link {
   font-size: 0.85rem;
@@ -110,7 +110,7 @@ ul { list-style: none; }
 .nav-link:hover, .nav-link.active { color: var(--charcoal); }
 .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
 
-.nav-actions { display: flex; gap: 8px; align-items: center; }
+.nav-actions { display: flex; gap: 8px; align-items: center; justify-self: end; }
 
 .btn-login {
   padding: 7px 18px;
@@ -285,13 +285,19 @@ ul { list-style: none; }
 
 /* ======================== TRUST BAR ======================== */
 .trust-bar {
-  padding: 52px 0 48px;
+  padding: 32px 0 48px;
   background: var(--white);
 }
-.trust-grid {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+.trust-card {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+  border: 1px solid rgba(0,0,0,0.05);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 40px 24px;
   gap: 0;
 }
 .trust-item {
@@ -299,24 +305,19 @@ ul { list-style: none; }
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
-  flex: 1;
-  padding: 0 40px;
-  max-width: 320px;
+  gap: 10px;
+  padding: 0 28px;
+  border-right: 1px solid var(--border);
 }
-.trust-divider {
-  width: 1px;
-  background: var(--border);
-  align-self: stretch;
-  min-height: 80px;
-  margin: 8px 0;
+.trust-item:last-child {
+  border-right: none;
 }
 .trust-icon {
   color: var(--crimson);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .trust-text h3 {
   font-size: 0.95rem;
@@ -753,9 +754,9 @@ ul { list-style: none; }
   .about-image { order: -1; }
   .about-image img { height: 220px; }
 
-  .trust-grid { flex-direction: column; align-items: center; gap: 24px; }
-  .trust-divider { display: none; }
-  .trust-item { padding: 0; max-width: 340px; }
+  .trust-card { grid-template-columns: 1fr; padding: 28px 20px; }
+  .trust-item { border-right: none; border-bottom: 1px solid var(--border); padding: 20px 0; }
+  .trust-item:last-child { border-bottom: none; padding-bottom: 0; }
 
   .stats-grid { grid-template-columns: 1fr; }
   .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
