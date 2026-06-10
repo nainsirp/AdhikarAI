@@ -302,6 +302,11 @@ ul { list-style: none; }
   grid-template-columns: repeat(3, 1fr);
   padding: 40px 24px;
   gap: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.trust-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.13);
 }
 .trust-item {
   display: flex;
@@ -310,10 +315,11 @@ ul { list-style: none; }
   text-align: center;
   gap: 10px;
   padding: 0 28px;
-  border-right: 1px solid var(--border);
-}
-.trust-item:last-child {
   border-right: none;
+  transition: transform 0.3s ease;
+}
+.trust-item:hover {
+  transform: scale(1.04);
 }
 .trust-icon {
   color: var(--crimson);
@@ -321,6 +327,10 @@ ul { list-style: none; }
   align-items: center;
   justify-content: center;
   margin-bottom: 6px;
+  transition: transform 0.3s ease;
+}
+.trust-item:hover .trust-icon {
+  transform: scale(1.15);
 }
 .trust-text h3 {
   font-size: 0.95rem;
@@ -336,15 +346,27 @@ ul { list-style: none; }
 
 /* ======================== ABOUT ======================== */
 .about-section {
-  padding: 80px 0;
+  padding: 40px 0 48px;
+  background: var(--warm-gray);
+}
+.about-card {
+  max-width: 1060px;
+  margin: 0 auto;
   background: var(--white);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 48px 52px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.about-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.12);
 }
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 56px;
+  gap: 52px;
   align-items: center;
 }
 .section-heading {
@@ -362,15 +384,21 @@ ul { list-style: none; }
   color: #444;
   line-height: 1.82;
 }
+.about-image {
+  overflow: hidden;
+  border-radius: var(--radius);
+}
 .about-image img {
   width: 100%;
   height: 300px;
   object-fit: cover;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition);
+  transition: transform 0.4s ease;
 }
-.about-image img:hover { transform: scale(1.01); }
+.about-card:hover .about-image img {
+  transform: scale(1.04);
+}
 
 /* ======================== STATS ======================== */
 .stats-section {
