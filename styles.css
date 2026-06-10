@@ -288,27 +288,32 @@ ul { list-style: none; }
 
 /* ======================== TRUST BAR ======================== */
 .trust-bar {
-  padding: 40px 0 52px;
+  padding: 32px 0 48px;
   background: var(--warm-gray);
 }
 .trust-card {
-  max-width: 900px;
+  max-width: 1060px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0;
+  gap: 20px;
 }
 .trust-item {
+  background: var(--white);
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 32px 24px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 8px;
-  padding: 16px 36px;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .trust-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.10);
 }
 .trust-icon {
   color: var(--crimson);
