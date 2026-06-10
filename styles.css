@@ -448,8 +448,22 @@ ul { list-style: none; }
 
 /* ======================== ABOUT THEM ======================== */
 .about-them-section {
-  padding: 72px 0 88px;
+  padding: 20px 0 52px;
   background: var(--warm-gray);
+}
+.about-them-card {
+  max-width: 1060px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 28px rgba(0,0,0,0.09);
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 52px 56px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.about-them-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 44px rgba(0,0,0,0.12);
 }
 .about-them-grid {
   display: grid;
