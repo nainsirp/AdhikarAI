@@ -170,6 +170,7 @@
     .social-btns {
       display: flex;
       gap: 10px;
+      margin-top: 14px;
       margin-bottom: 14px;
     }
     .btn-social {
@@ -187,10 +188,11 @@
       color: var(--charcoal);
       background: var(--white);
       cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
       text-decoration: none;
     }
-    .btn-social:hover { background: var(--warm-gray); border-color: #CCC; }
+    .btn-social:hover { background: var(--warm-gray); border-color: #CCC; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
 
     .auth-switch {
       text-align: center;
