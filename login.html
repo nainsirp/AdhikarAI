@@ -7,7 +7,7 @@
   <meta name="description" content="Sign in to your AdhikarAI account and access your AI-powered legal companion." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -28,16 +28,37 @@
       font-family: var(--font);
       display: flex;
       min-height: 100vh;
-      background: var(--white);
+      background: var(--warm-gray);
     }
 
-    /* ── RIGHT IMAGE (flipped - image on left for login) ── */
+    /* ── LEFT PANEL (form) ── */
+    .auth-left {
+      flex: 0 0 46%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px 56px;
+      background: var(--white);
+      overflow-y: auto;
+    }
+
+    /* ── RIGHT PANEL (image) ── */
     .auth-right {
       flex: 1;
-      position: relative;
-      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 24px 24px 24px 12px;
+      background: var(--warm-gray);
     }
-    .auth-right img {
+    .auth-right-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 520px;
+    }
+    .auth-right-inner img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -47,33 +68,24 @@
     .auth-quote {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      padding: 36px 40px;
-      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+      padding: 28px 32px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 65%, transparent 100%);
+      border-radius: 0 0 16px 16px;
     }
     .quote-text {
-      font-size: 1.15rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--white);
-      line-height: 1.55;
-      margin-bottom: 10px;
+      line-height: 1.5;
+      margin-bottom: 8px;
     }
     .quote-author {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: rgba(255,255,255,0.7);
       font-style: italic;
     }
 
-    /* ── LEFT PANEL ── */
-    .auth-left {
-      flex: 0 0 44%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 60px 56px;
-      background: var(--white);
-      overflow-y: auto;
-    }
-
+    /* ── FORM ELEMENTS ── */
     .auth-logo {
       font-size: 1.2rem;
       font-weight: 700;
@@ -202,27 +214,18 @@
     }
     .auth-switch a:hover { text-decoration: underline; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      body { flex-direction: column-reverse; }
-      .auth-left { flex: none; padding: 40px 28px; }
-      .auth-right { min-height: 260px; }
+      body { flex-direction: column; }
+      .auth-left { flex: none; padding: 36px 24px; }
+      .auth-right { min-height: 240px; padding: 12px; }
+      .auth-right-inner { min-height: 220px; }
       .social-btns { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
-  <!-- IMAGE PANEL -->
-  <div class="auth-right">
-    <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
-    <div class="auth-quote">
-      <p class="quote-text">"You may encounter many defeats,<br>but you must not be defeated."</p>
-      <p class="quote-author">— Maya Angelou</p>
-    </div>
-  </div>
-
-  <!-- FORM PANEL -->
+  <!-- LEFT: FORM -->
   <div class="auth-left">
     <a href="index.html" class="auth-logo">
       <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
@@ -267,6 +270,17 @@
     </div>
 
     <p class="auth-switch">Don't have an account? <a href="signup.html">Sign Up</a></p>
+  </div>
+
+  <!-- RIGHT: IMAGE + QUOTE -->
+  <div class="auth-right">
+    <div class="auth-right-inner">
+      <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
+      <div class="auth-quote">
+        <p class="quote-text">"You may encounter many defeats,<br>but you must not be defeated."</p>
+        <p class="quote-author">— Maya Angelou</p>
+      </div>
+    </div>
   </div>
 
 </body>

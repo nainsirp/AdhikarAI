@@ -13,13 +13,12 @@
 
     :root {
       --crimson: #8B1A1A;
+      --crimson-dk: #6B1212;
       --charcoal: #1A1A1A;
       --mid-gray: #6B7280;
       --border: #E5E5E5;
       --warm-gray: #F5F5F5;
       --white: #FFFFFF;
-      --gold: #8B6914;
-      --gold-hover: #705510;
       --font: 'Inter', system-ui, sans-serif;
     }
 
@@ -29,18 +28,42 @@
       font-family: var(--font);
       display: flex;
       min-height: 100vh;
-      background: var(--white);
+      background: var(--warm-gray);
     }
 
     /* ── LEFT PANEL ── */
     .auth-left {
-      flex: 0 0 44%;
+      flex: 0 0 46%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 60px 56px;
+      padding: 48px 56px;
       background: var(--white);
       overflow-y: auto;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .auth-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 24px 24px 24px 12px;
+      background: var(--warm-gray);
+    }
+    .auth-right-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 520px;
+    }
+    .auth-right-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
     }
 
     .auth-logo {
@@ -109,7 +132,7 @@
     .btn-signup {
       width: 100%;
       padding: 11px;
-      background: var(--gold);
+      background: var(--crimson);
       color: var(--white);
       border: none;
       border-radius: 6px;
@@ -121,8 +144,8 @@
       letter-spacing: 0.01em;
     }
     .btn-signup:hover {
-      background: var(--gold-hover);
-      box-shadow: 0 4px 14px rgba(139,105,20,0.3);
+      background: var(--crimson-dk);
+      box-shadow: 0 4px 14px rgba(139,26,26,0.3);
     }
 
     .divider {
@@ -180,44 +203,31 @@
     }
     .auth-switch a:hover { text-decoration: underline; }
 
-    /* ── RIGHT PANEL ── */
-    .auth-right {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-    .auth-right img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
     .auth-quote {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      padding: 36px 40px;
-      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+      padding: 28px 32px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 65%, transparent 100%);
+      border-radius: 0 0 16px 16px;
     }
     .quote-text {
-      font-size: 1.15rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--white);
-      line-height: 1.55;
-      margin-bottom: 10px;
+      line-height: 1.5;
+      margin-bottom: 8px;
     }
     .quote-author {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: rgba(255,255,255,0.7);
       font-style: italic;
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       body { flex-direction: column; }
-      .auth-left { flex: none; padding: 40px 28px; }
-      .auth-right { min-height: 280px; }
-      .auth-logo { margin-bottom: 32px; }
+      .auth-left { flex: none; padding: 36px 24px; }
+      .auth-right { min-height: 240px; padding: 12px; }
+      .auth-right-inner { min-height: 220px; }
       .social-btns { flex-direction: column; }
     }
   </style>
@@ -280,10 +290,12 @@
 
   <!-- RIGHT: IMAGE + QUOTE -->
   <div class="auth-right">
-    <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
-    <div class="auth-quote">
-      <p class="quote-text">"I raise up my voice—not so that I can shout,<br>but so that those without a voice can be heard."</p>
-      <p class="quote-author">— Malala Yousafzai</p>
+    <div class="auth-right-inner">
+      <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
+      <div class="auth-quote">
+        <p class="quote-text">"I raise up my voice—not so that I can shout,<br>but so that those without a voice can be heard."</p>
+        <p class="quote-author">— Malala Yousafzai</p>
+      </div>
     </div>
   </div>
 
