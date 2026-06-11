@@ -7,7 +7,7 @@
   <meta name="description" content="Create your AdhikarAI account and get instant access to AI-powered legal guidance." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { overflow: hidden; }
@@ -21,210 +21,93 @@
       --warm-gray: #F5F5F5;
       --white: #FFFFFF;
       --font: 'Inter', system-ui, sans-serif;
+      --error: #DC2626;
+      --success: #16A34A;
     }
 
     html, body { height: 100%; overflow: hidden; }
+    body { font-family: var(--font); display: flex; height: 100vh; background: var(--warm-gray); overflow: hidden; }
 
-    body {
-      font-family: var(--font);
-      display: flex;
-      height: 100vh;
-      background: var(--warm-gray);
-      overflow: hidden;
-    }
-
-    /* ── LEFT PANEL ── */
     .auth-left {
       flex: 0 0 46%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 36px 52px;
-      background: var(--white);
-      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 36px 52px; background: var(--white); overflow: hidden;
     }
-
     .auth-right {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      padding: 20px 20px 20px 10px;
-      background: var(--warm-gray);
+      flex: 1; display: flex; align-items: center;
+      padding: 20px 20px 20px 10px; background: var(--warm-gray);
     }
     .auth-right-inner {
-      width: 100%;
-      height: calc(100vh - 40px);
-      position: relative;
-      border-radius: 18px;
-      overflow: hidden;
+      width: 100%; height: calc(100vh - 40px); position: relative;
+      border-radius: 18px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     }
-    .auth-right-inner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
+    .auth-right-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+    .auth-quote {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 32px;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 65%, transparent 100%);
+      border-radius: 0 0 18px 18px;
     }
+    .quote-text { font-size: 1rem; font-weight: 600; color: var(--white); line-height: 1.5; margin-bottom: 8px; }
+    .quote-author { font-size: 0.75rem; color: rgba(255,255,255,0.7); font-style: italic; }
 
-    .auth-logo {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 28px;
-      text-decoration: none;
-    }
+    .auth-logo { font-size: 1.15rem; font-weight: 700; margin-bottom: 28px; text-decoration: none; }
     .logo-adhikar { color: var(--charcoal); }
-    .logo-ai      { color: var(--crimson); }
+    .logo-ai { color: var(--crimson); }
 
-    .auth-title {
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: var(--charcoal);
-      margin-bottom: 22px;
-      letter-spacing: -0.02em;
-    }
+    .auth-title { font-size: 1.55rem; font-weight: 700; color: var(--charcoal); margin-bottom: 22px; letter-spacing: -0.02em; }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
-    .form-label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      margin-bottom: 6px;
-    }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--charcoal); margin-bottom: 6px; }
     .form-input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-family: var(--font);
-      color: var(--charcoal);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.2s ease;
+      width: 100%; padding: 8px 12px;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-size: 0.85rem; font-family: var(--font); color: var(--charcoal);
+      background: var(--white); outline: none; transition: border-color 0.2s ease;
     }
     .form-input::placeholder { color: #BCBCBC; }
     .form-input:focus { border-color: #AAAAAA; }
+    .form-input.error { border-color: var(--error); }
 
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 6px 0 14px;
-    }
-    .checkbox-row input[type="checkbox"] {
-      width: 14px; height: 14px;
-      accent-color: var(--gold);
-      cursor: pointer;
-    }
-    .checkbox-row label {
-      font-size: 0.78rem;
-      color: var(--mid-gray);
-    }
-    .checkbox-row a {
-      color: var(--charcoal);
-      text-decoration: underline;
-      font-weight: 500;
-    }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 6px 0 14px; }
+    .checkbox-row input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--crimson); cursor: pointer; }
+    .checkbox-row label { font-size: 0.78rem; color: var(--mid-gray); }
+    .checkbox-row a { color: var(--charcoal); text-decoration: underline; font-weight: 500; }
 
     .btn-signup {
-      width: 100%;
-      padding: 11px;
-      background: var(--crimson);
-      color: var(--white);
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      font-family: var(--font);
-      cursor: pointer;
+      width: 100%; padding: 11px;
+      background: var(--crimson); color: var(--white);
+      border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;
+      font-family: var(--font); cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease;
-      letter-spacing: 0.01em;
     }
-    .btn-signup:hover {
-      background: var(--crimson-dk);
-      box-shadow: 0 4px 14px rgba(139,26,26,0.3);
-    }
+    .btn-signup:hover { background: var(--crimson-dk); box-shadow: 0 4px 14px rgba(139,26,26,0.3); }
+    .btn-signup:disabled { opacity: 0.65; cursor: not-allowed; }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 14px 0;
+    .alert-msg {
+      display: none; padding: 9px 12px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 500; margin-bottom: 12px;
     }
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-    .divider-dot {
-      width: 10px; height: 10px;
-      background: #333;
-      border-radius: 2px;
-      transform: rotate(45deg);
-    }
+    .alert-msg.error { display: block; background: #FEF2F2; color: var(--error); border: 1px solid #FECACA; }
+    .alert-msg.success { display: block; background: #F0FDF4; color: var(--success); border: 1px solid #BBF7D0; }
 
-    .social-btns {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-      margin-bottom: 14px;
-    }
+    .social-btns { display: flex; gap: 10px; margin-top: 14px; margin-bottom: 14px; }
     .btn-social {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      font-family: var(--font);
-      color: var(--charcoal);
-      background: var(--white);
-      cursor: pointer;
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-size: 0.8rem; font-weight: 500; font-family: var(--font);
+      color: var(--charcoal); background: var(--white); cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
       text-decoration: none;
     }
     .btn-social:hover { background: var(--warm-gray); border-color: #CCC; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
 
-    .auth-switch {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--mid-gray);
-    }
-    .auth-switch a {
-      color: var(--crimson);
-      font-weight: 600;
-      text-decoration: none;
-    }
+    .auth-switch { text-align: center; font-size: 0.8rem; color: var(--mid-gray); }
+    .auth-switch a { color: var(--crimson); font-weight: 600; text-decoration: none; }
     .auth-switch a:hover { text-decoration: underline; }
-
-    .auth-quote {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 28px 32px;
-      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 65%, transparent 100%);
-      border-radius: 0 0 16px 16px;
-    }
-    .quote-text {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.5;
-      margin-bottom: 8px;
-    }
-    .quote-author {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.7);
-      font-style: italic;
-    }
 
     @media (max-width: 768px) {
       html, body { overflow: auto; height: auto; }
@@ -246,20 +129,20 @@
 
     <h1 class="auth-title">Get Started Now</h1>
 
+    <div id="alert-box" class="alert-msg"></div>
+
     <form id="signup-form" novalidate>
       <div class="form-group">
         <label class="form-label" for="signup-name">Name</label>
         <input class="form-input" type="text" id="signup-name" placeholder="Enter your name" required />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="signup-email">Email address</label>
         <input class="form-input" type="email" id="signup-email" placeholder="Enter your email" required />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="signup-password">Password</label>
-        <input class="form-input" type="password" id="signup-password" placeholder="Name" required />
+        <input class="form-input" type="password" id="signup-password" placeholder="Min. 6 characters" required />
       </div>
 
       <div class="checkbox-row">
@@ -267,17 +150,15 @@
         <label for="agree-terms">I agree to the <a href="#">terms &amp; policy</a></label>
       </div>
 
-      <button type="submit" class="btn-signup">Signup</button>
+      <button type="submit" class="btn-signup" id="btn-submit">Sign Up</button>
     </form>
 
     <div class="social-btns">
       <a href="#" class="btn-social" id="google-signup">
-        <!-- Google Icon -->
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Sign in with Google
       </a>
       <a href="#" class="btn-social" id="apple-signup">
-        <!-- Apple Icon -->
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         Sign in with Apple
       </a>
@@ -286,10 +167,10 @@
     <p class="auth-switch">Have an account? <a href="login.html">Sign In</a></p>
   </div>
 
-  <!-- RIGHT: IMAGE + QUOTE -->
+  <!-- RIGHT: IMAGE -->
   <div class="auth-right">
     <div class="auth-right-inner">
-      <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
+      <img src="auth.png" alt="Indian woman in traditional attire" />
       <div class="auth-quote">
         <p class="quote-text">"I raise up my voice—not so that I can shout,<br>but so that those without a voice can be heard."</p>
         <p class="quote-author">— Malala Yousafzai</p>
@@ -297,5 +178,88 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    const alertBox = document.getElementById('alert-box');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    function showAlert(msg, type = 'error') {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert-msg ' + type;
+    }
+
+    // If already logged in, go to dashboard
+    auth.onAuthStateChanged(user => {
+      if (user) window.location.href = 'dashboard.html';
+    });
+
+    // Email/Password Signup
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name     = document.getElementById('signup-name').value.trim();
+      const email    = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const agreed   = document.getElementById('agree-terms').checked;
+
+      if (!name)               return showAlert('Please enter your name.');
+      if (!email)              return showAlert('Please enter your email.');
+      if (password.length < 6) return showAlert('Password must be at least 6 characters.');
+      if (!agreed)             return showAlert('Please agree to the terms & policy.');
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Creating account…';
+
+      try {
+        // Create auth user
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        // Update display name
+        await cred.user.updateProfile({ displayName: name });
+        // Save profile to Firestore
+        await db.collection('users').doc(cred.user.uid).set({
+          name,
+          email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showAlert('Account created! Redirecting…', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+      } catch (err) {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Sign Up';
+        const msgs = {
+          'auth/email-already-in-use': 'This email is already registered. Try signing in.',
+          'auth/invalid-email':        'Please enter a valid email address.',
+          'auth/weak-password':        'Password is too weak. Use at least 6 characters.'
+        };
+        showAlert(msgs[err.code] || err.message);
+      }
+    });
+
+    // Google Sign-In
+    document.getElementById('google-signup').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        // Save to Firestore if new user
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+          await db.collection('users').doc(user.uid).set({
+            name: user.displayName || 'User',
+            email: user.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        showAlert('Google sign-in failed. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>

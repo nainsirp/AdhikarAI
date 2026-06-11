@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In – AdhikarAI</title>
-  <meta name="description" content="Sign in to your AdhikarAI account and access your AI-powered legal companion." />
+  <meta name="description" content="Sign in to your AdhikarAI account." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -21,200 +21,91 @@
       --warm-gray: #F5F5F5;
       --white: #FFFFFF;
       --font: 'Inter', system-ui, sans-serif;
+      --error: #DC2626;
+      --success: #16A34A;
     }
 
     html, body { height: 100%; overflow: hidden; }
+    body { font-family: var(--font); display: flex; height: 100vh; background: var(--warm-gray); overflow: hidden; }
 
-    body {
-      font-family: var(--font);
-      display: flex;
-      height: 100vh;
-      background: var(--warm-gray);
-      overflow: hidden;
-    }
-
-    /* ── LEFT PANEL (form) ── */
     .auth-left {
       flex: 0 0 46%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 36px 52px;
-      background: var(--white);
-      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 36px 52px; background: var(--white); overflow: hidden;
     }
-
     .auth-right {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      padding: 20px 20px 20px 10px;
-      background: var(--warm-gray);
+      flex: 1; display: flex; align-items: center;
+      padding: 20px 20px 20px 10px; background: var(--warm-gray);
     }
     .auth-right-inner {
-      width: 100%;
-      height: calc(100vh - 40px);
-      position: relative;
-      border-radius: 18px;
-      overflow: hidden;
+      width: 100%; height: calc(100vh - 40px); position: relative;
+      border-radius: 18px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     }
-    .auth-right-inner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
-    }
+    .auth-right-inner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
     .auth-quote {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
+      position: absolute; bottom: 0; left: 0; right: 0;
       padding: 28px 32px;
       background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 65%, transparent 100%);
-      border-radius: 0 0 16px 16px;
+      border-radius: 0 0 18px 18px;
     }
-    .quote-text {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.5;
-      margin-bottom: 8px;
-    }
-    .quote-author {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.7);
-      font-style: italic;
-    }
+    .quote-text { font-size: 1rem; font-weight: 600; color: var(--white); line-height: 1.5; margin-bottom: 8px; }
+    .quote-author { font-size: 0.75rem; color: rgba(255,255,255,0.7); font-style: italic; }
 
-    /* ── FORM ELEMENTS ── */
-    .auth-logo {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 28px;
-      text-decoration: none;
-    }
+    .auth-logo { font-size: 1.15rem; font-weight: 700; margin-bottom: 28px; text-decoration: none; }
     .logo-adhikar { color: var(--charcoal); }
-    .logo-ai      { color: var(--crimson); }
+    .logo-ai { color: var(--crimson); }
 
-    .auth-title {
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: var(--charcoal);
-      margin-bottom: 4px;
-      letter-spacing: -0.02em;
-    }
-    .auth-subtitle {
-      font-size: 0.82rem;
-      color: var(--mid-gray);
-      margin-bottom: 24px;
-    }
+    .auth-title { font-size: 1.55rem; font-weight: 700; color: var(--charcoal); margin-bottom: 4px; letter-spacing: -0.02em; }
+    .auth-subtitle { font-size: 0.82rem; color: var(--mid-gray); margin-bottom: 24px; }
 
     .form-group { margin-bottom: 12px; }
-    .form-label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--charcoal);
-      margin-bottom: 6px;
-    }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--charcoal); margin-bottom: 6px; }
     .form-input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-family: var(--font);
-      color: var(--charcoal);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.2s ease;
+      width: 100%; padding: 8px 12px;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-size: 0.85rem; font-family: var(--font); color: var(--charcoal);
+      background: var(--white); outline: none; transition: border-color 0.2s ease;
     }
     .form-input::placeholder { color: #BCBCBC; }
     .form-input:focus { border-color: #AAAAAA; }
 
-    .form-row-end {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 20px;
-    }
-    .forgot-link {
-      font-size: 0.78rem;
-      color: var(--crimson);
-      text-decoration: none;
-      font-weight: 500;
-    }
+    .form-row-end { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .forgot-link { font-size: 0.78rem; color: var(--crimson); text-decoration: none; font-weight: 500; }
     .forgot-link:hover { text-decoration: underline; }
 
     .btn-login {
-      width: 100%;
-      padding: 11px;
-      background: var(--crimson);
-      color: var(--white);
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      font-family: var(--font);
-      cursor: pointer;
+      width: 100%; padding: 11px;
+      background: var(--crimson); color: var(--white);
+      border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 600;
+      font-family: var(--font); cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease;
-      letter-spacing: 0.01em;
     }
-    .btn-login:hover {
-      background: var(--crimson-dk);
-      box-shadow: 0 4px 14px rgba(139,26,26,0.3);
-    }
+    .btn-login:hover { background: var(--crimson-dk); box-shadow: 0 4px 14px rgba(139,26,26,0.3); }
+    .btn-login:disabled { opacity: 0.65; cursor: not-allowed; }
 
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 14px 0;
+    .alert-msg {
+      display: none; padding: 9px 12px; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 500; margin-bottom: 12px;
     }
-    .divider-line { flex: 1; height: 1px; background: var(--border); }
-    .divider-dot {
-      width: 10px; height: 10px;
-      background: #333;
-      border-radius: 2px;
-      transform: rotate(45deg);
-    }
+    .alert-msg.error { display: block; background: #FEF2F2; color: var(--error); border: 1px solid #FECACA; }
+    .alert-msg.success { display: block; background: #F0FDF4; color: var(--success); border: 1px solid #BBF7D0; }
 
-    .social-btns {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-      margin-bottom: 14px;
-    }
+    .social-btns { display: flex; gap: 10px; margin-top: 14px; margin-bottom: 14px; }
     .btn-social {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      font-family: var(--font);
-      color: var(--charcoal);
-      background: var(--white);
-      cursor: pointer;
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-size: 0.8rem; font-weight: 500; font-family: var(--font);
+      color: var(--charcoal); background: var(--white); cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
       text-decoration: none;
     }
     .btn-social:hover { background: var(--warm-gray); border-color: #CCC; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
 
-    .auth-switch {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--mid-gray);
-    }
-    .auth-switch a {
-      color: var(--crimson);
-      font-weight: 600;
-      text-decoration: none;
-    }
+    .auth-switch { text-align: center; font-size: 0.8rem; color: var(--mid-gray); }
+    .auth-switch a { color: var(--crimson); font-weight: 600; text-decoration: none; }
     .auth-switch a:hover { text-decoration: underline; }
 
     @media (max-width: 768px) {
@@ -238,22 +129,21 @@
     <h1 class="auth-title">Welcome Back</h1>
     <p class="auth-subtitle">Sign in to continue your journey toward justice.</p>
 
+    <div id="alert-box" class="alert-msg"></div>
+
     <form id="login-form" novalidate>
       <div class="form-group">
         <label class="form-label" for="login-email">Email address</label>
         <input class="form-input" type="email" id="login-email" placeholder="Enter your email" required />
       </div>
-
       <div class="form-group">
         <label class="form-label" for="login-password">Password</label>
         <input class="form-input" type="password" id="login-password" placeholder="Enter your password" required />
       </div>
-
       <div class="form-row-end">
-        <a href="#" class="forgot-link">Forgot password?</a>
+        <a href="#" class="forgot-link" id="forgot-link">Forgot password?</a>
       </div>
-
-      <button type="submit" class="btn-login">Sign In</button>
+      <button type="submit" class="btn-login" id="btn-submit">Sign In</button>
     </form>
 
     <div class="social-btns">
@@ -270,10 +160,10 @@
     <p class="auth-switch">Don't have an account? <a href="signup.html">Sign Up</a></p>
   </div>
 
-  <!-- RIGHT: IMAGE + QUOTE -->
+  <!-- RIGHT: IMAGE -->
   <div class="auth-right">
     <div class="auth-right-inner">
-      <img src="auth.png" alt="Indian woman in traditional attire representing strength and dignity" />
+      <img src="auth.png" alt="Indian woman in traditional attire" />
       <div class="auth-quote">
         <p class="quote-text">"You may encounter many defeats,<br>but you must not be defeated."</p>
         <p class="quote-author">— Maya Angelou</p>
@@ -281,5 +171,84 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    const alertBox = document.getElementById('alert-box');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    function showAlert(msg, type = 'error') {
+      alertBox.textContent = msg;
+      alertBox.className = 'alert-msg ' + type;
+    }
+
+    // If already logged in, go to dashboard
+    auth.onAuthStateChanged(user => {
+      if (user) window.location.href = 'dashboard.html';
+    });
+
+    // Email/Password Login
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!email || !password) return showAlert('Please enter your email and password.');
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Signing in…';
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Sign In';
+        const msgs = {
+          'auth/user-not-found':   'No account found with this email. Please sign up.',
+          'auth/wrong-password':   'Incorrect password. Try again or reset it.',
+          'auth/invalid-email':    'Please enter a valid email address.',
+          'auth/too-many-requests':'Too many attempts. Please wait a moment.'
+        };
+        showAlert(msgs[err.code] || err.message);
+      }
+    });
+
+    // Forgot Password
+    document.getElementById('forgot-link').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      if (!email) return showAlert('Enter your email above, then click Forgot password.');
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showAlert('Password reset email sent! Check your inbox.', 'success');
+      } catch (err) {
+        showAlert('Could not send reset email. Check the email address.');
+      }
+    });
+
+    // Google Sign-In
+    document.getElementById('google-login').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (!userDoc.exists) {
+          await db.collection('users').doc(user.uid).set({
+            name: user.displayName || 'User',
+            email: user.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        showAlert('Google sign-in failed. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>
