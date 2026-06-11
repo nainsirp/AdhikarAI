@@ -198,39 +198,46 @@
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <!-- Firebase SDKs (v param busts GitHub Pages cache) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js?v=3"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js?v=3"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js?v=3"></script>
 
   <script>
+    // ── Inline Firebase init (no external file) ──
+    const _cfg = {
+      apiKey:            "AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM",
+      authDomain:        "adhikarai-9a254.firebaseapp.com",
+      projectId:         "adhikarai-9a254",
+      storageBucket:     "adhikarai-9a254.firebasestorage.app",
+      messagingSenderId: "531023710976",
+      appId:             "1:531023710976:web:976cb2636d3f724603c1e5"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(_cfg);
+    const _auth = firebase.auth();
+    const _db   = firebase.firestore();
+
+    // ── UI refs ──
     const alertBox = document.getElementById('alert-box');
     const btnSubmit = document.getElementById('btn-submit');
-    let isSubmitting = false;
 
     function showAlert(msg, type = 'error') {
       alertBox.textContent = msg;
       alertBox.className = 'alert-msg ' + type;
     }
 
-    // On signup page load: sign out any existing session so user can always create a new account
-    auth.signOut().then(() => {
-      // Page is ready for fresh signup
-    }).catch(() => {});
-
-    // Password eye toggle
+    // ── Password eye toggle ──
     document.getElementById('toggle-password').addEventListener('click', () => {
       const input = document.getElementById('signup-password');
       const icon  = document.getElementById('eye-icon');
-      const show  = input.type === 'password';
-      input.type  = show ? 'text' : 'password';
-      icon.innerHTML = show
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      icon.innerHTML = isHidden
         ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
         : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
     });
 
-    // Email/Password Signup
+    // ── Signup form submit ──
     document.getElementById('signup-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const name     = document.getElementById('signup-name').value.trim();
@@ -243,31 +250,31 @@
       if (password.length < 6) return showAlert('Password must be at least 6 characters.');
       if (!agreed)             return showAlert('Please agree to the terms & policy.');
 
-      isSubmitting = true;
       btnSubmit.disabled = true;
       btnSubmit.textContent = 'Creating account…';
 
       try {
-        // 1. Create auth user
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        // 2. Update display name
+        // Create Firebase Auth user
+        const cred = await _auth.createUserWithEmailAndPassword(email, password);
         await cred.user.updateProfile({ displayName: name });
-        // 3. Save to Firestore (separate try so auth still succeeds if Firestore fails)
+
+        // Save to Firestore
         try {
-          await db.collection('users').doc(cred.user.uid).set({
-            name,
-            email,
+          await _db.collection('users').doc(cred.user.uid).set({
+            name, email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         } catch (fsErr) {
-          console.warn('Firestore write failed (check rules):', fsErr.message);
+          console.warn('Firestore write failed:', fsErr.message);
         }
-        // 4. Sign out so user logs in fresh
-        await auth.signOut();
-        showAlert('Account created! Please sign in.', 'success');
-        setTimeout(() => window.location.href = 'login.html', 1200);
+
+        // Sign out so user logs in fresh on login page
+        await _auth.signOut();
+
+        showAlert('Account created! Redirecting to login…', 'success');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+
       } catch (err) {
-        isSubmitting = false;
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Sign Up';
         const msgs = {
@@ -279,27 +286,26 @@
       }
     });
 
-    // Google Sign-In
+    // ── Google Sign-In ──
     document.getElementById('google-signup').addEventListener('click', async (e) => {
       e.preventDefault();
-      isSubmitting = true;
-      const provider = new firebase.auth.GoogleAuthProvider();
       try {
-        const result = await auth.signInWithPopup(provider);
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await _auth.signInWithPopup(provider);
         const user = result.user;
         try {
-          const userDoc = await db.collection('users').doc(user.uid).get();
-          if (!userDoc.exists) {
-            await db.collection('users').doc(user.uid).set({
+          const snap = await _db.collection('users').doc(user.uid).get();
+          if (!snap.exists) {
+            await _db.collection('users').doc(user.uid).set({
               name: user.displayName || 'User',
               email: user.email,
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
           }
         } catch (fsErr) { console.warn('Firestore:', fsErr.message); }
-        window.location.href = 'index.html';
+        showAlert('Signed in with Google! Redirecting…', 'success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1000);
       } catch (err) {
-        isSubmitting = false;
         showAlert('Google sign-in failed. Please try again.');
       }
     });
