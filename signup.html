@@ -187,15 +187,18 @@
   <script>
     const alertBox = document.getElementById('alert-box');
     const btnSubmit = document.getElementById('btn-submit');
+    let isSubmitting = false;
 
     function showAlert(msg, type = 'error') {
       alertBox.textContent = msg;
       alertBox.className = 'alert-msg ' + type;
     }
 
-    // If already logged in, go to dashboard
+    // If already logged in (page load), redirect to home
     auth.onAuthStateChanged(user => {
-      if (user) window.location.href = 'dashboard.html';
+      if (user && !isSubmitting) {
+        window.location.href = 'index.html';
+      }
     });
 
     // Email/Password Signup
@@ -211,23 +214,31 @@
       if (password.length < 6) return showAlert('Password must be at least 6 characters.');
       if (!agreed)             return showAlert('Please agree to the terms & policy.');
 
+      isSubmitting = true;
       btnSubmit.disabled = true;
       btnSubmit.textContent = 'Creating account…';
 
       try {
-        // Create auth user
+        // 1. Create auth user
         const cred = await auth.createUserWithEmailAndPassword(email, password);
-        // Update display name
+        // 2. Update display name
         await cred.user.updateProfile({ displayName: name });
-        // Save profile to Firestore
-        await db.collection('users').doc(cred.user.uid).set({
-          name,
-          email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        showAlert('Account created! Redirecting…', 'success');
-        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+        // 3. Save to Firestore (separate try so auth still succeeds if Firestore fails)
+        try {
+          await db.collection('users').doc(cred.user.uid).set({
+            name,
+            email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (fsErr) {
+          console.warn('Firestore write failed (check rules):', fsErr.message);
+        }
+        // 4. Sign out so user logs in fresh
+        await auth.signOut();
+        showAlert('Account created! Please sign in.', 'success');
+        setTimeout(() => window.location.href = 'login.html', 1200);
       } catch (err) {
+        isSubmitting = false;
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Sign Up';
         const msgs = {
@@ -242,21 +253,24 @@
     // Google Sign-In
     document.getElementById('google-signup').addEventListener('click', async (e) => {
       e.preventDefault();
+      isSubmitting = true;
       const provider = new firebase.auth.GoogleAuthProvider();
       try {
         const result = await auth.signInWithPopup(provider);
         const user = result.user;
-        // Save to Firestore if new user
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-          await db.collection('users').doc(user.uid).set({
-            name: user.displayName || 'User',
-            email: user.email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-        window.location.href = 'dashboard.html';
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (!userDoc.exists) {
+            await db.collection('users').doc(user.uid).set({
+              name: user.displayName || 'User',
+              email: user.email,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        } catch (fsErr) { console.warn('Firestore:', fsErr.message); }
+        window.location.href = 'index.html';
       } catch (err) {
+        isSubmitting = false;
         showAlert('Google sign-in failed. Please try again.');
       }
     });

@@ -180,15 +180,16 @@
   <script>
     const alertBox = document.getElementById('alert-box');
     const btnSubmit = document.getElementById('btn-submit');
+    let isSubmitting = false;
 
     function showAlert(msg, type = 'error') {
       alertBox.textContent = msg;
       alertBox.className = 'alert-msg ' + type;
     }
 
-    // If already logged in, go to dashboard
+    // If already logged in (page load), go to home
     auth.onAuthStateChanged(user => {
-      if (user) window.location.href = 'dashboard.html';
+      if (user && !isSubmitting) window.location.href = 'index.html';
     });
 
     // Email/Password Login
@@ -198,19 +199,22 @@
       const password = document.getElementById('login-password').value;
       if (!email || !password) return showAlert('Please enter your email and password.');
 
+      isSubmitting = true;
       btnSubmit.disabled = true;
       btnSubmit.textContent = 'Signing in…';
       try {
         await auth.signInWithEmailAndPassword(email, password);
-        window.location.href = 'dashboard.html';
+        window.location.href = 'index.html';
       } catch (err) {
+        isSubmitting = false;
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Sign In';
         const msgs = {
           'auth/user-not-found':   'No account found with this email. Please sign up.',
           'auth/wrong-password':   'Incorrect password. Try again or reset it.',
           'auth/invalid-email':    'Please enter a valid email address.',
-          'auth/too-many-requests':'Too many attempts. Please wait a moment.'
+          'auth/too-many-requests':'Too many attempts. Please wait a moment.',
+          'auth/invalid-credential': 'Incorrect email or password. Please try again.'
         };
         showAlert(msgs[err.code] || err.message);
       }
@@ -232,20 +236,24 @@
     // Google Sign-In
     document.getElementById('google-login').addEventListener('click', async (e) => {
       e.preventDefault();
+      isSubmitting = true;
       const provider = new firebase.auth.GoogleAuthProvider();
       try {
         const result = await auth.signInWithPopup(provider);
         const user = result.user;
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (!userDoc.exists) {
-          await db.collection('users').doc(user.uid).set({
-            name: user.displayName || 'User',
-            email: user.email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-        window.location.href = 'dashboard.html';
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (!userDoc.exists) {
+            await db.collection('users').doc(user.uid).set({
+              name: user.displayName || 'User',
+              email: user.email,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        } catch (fsErr) { console.warn('Firestore:', fsErr.message); }
+        window.location.href = 'index.html';
       } catch (err) {
+        isSubmitting = false;
         showAlert('Google sign-in failed. Please try again.');
       }
     });
