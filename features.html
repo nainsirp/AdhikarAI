@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Features – AdhikarAI</title>
+  <meta name="description" content="Explore all features of AdhikarAI — AI-powered legal tools built for women across India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --crimson: #8B1A1A;
+      --crimson-dk: #6B1212;
+      --charcoal: #1A1A1A;
+      --mid-gray: #6B7280;
+      --border: #E8E8E8;
+      --warm-gray: #F5F5F5;
+      --white: #FFFFFF;
+      --font: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--warm-gray);
+      color: var(--charcoal);
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px;
+      height: 62px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+    }
+    .nav-logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .logo-adhikar { color: var(--charcoal); }
+    .logo-ai      { color: var(--crimson); }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+    }
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--charcoal); }
+    .nav-link.active {
+      color: var(--crimson);
+      border-bottom: 2px solid var(--crimson);
+      padding-bottom: 2px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .lang-btn:hover { background: var(--warm-gray); }
+
+    /* ── NOTIFICATION BAR ── */
+    .notif-bar {
+      background: #FDF8F0;
+      border-bottom: 1px solid #F0E6D3;
+      padding: 10px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .notif-text {
+      font-size: 0.82rem;
+      color: var(--mid-gray);
+    }
+    .notif-text a {
+      color: var(--crimson);
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .notif-text a:hover { text-decoration: underline; }
+    .notif-arrows {
+      display: flex;
+      gap: 8px;
+    }
+    .notif-arrow {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mid-gray);
+      font-size: 0.75rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .notif-arrow:hover { background: var(--warm-gray); border-color: #CCC; }
+
+    /* ── PAGE CONTENT ── */
+    .page-content {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 28px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.10);
+    }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--charcoal);
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover .feature-icon {
+      transform: scale(1.12);
+    }
+    .feature-icon svg {
+      width: 36px; height: 36px;
+      stroke: var(--charcoal);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feature-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      line-height: 1.35;
+    }
+    .feature-desc {
+      font-size: 0.78rem;
+      color: var(--mid-gray);
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .notif-bar { padding: 10px 20px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-content { padding: 28px 16px 48px; }
+    }
+    @media (max-width: 480px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-adhikar">Adhi</span><span class="logo-ai">kar</span><span class="logo-adhikar">AI</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html#home" class="nav-link">Home</a>
+      <a href="index.html#about" class="nav-link">About</a>
+      <a href="index.html#how-it-works" class="nav-link">How it works</a>
+      <a href="features.html" class="nav-link active">Features</a>
+    </nav>
+    <div class="nav-right">
+      <button class="lang-btn" id="lang-toggle" aria-label="Change language">
+        <!-- Globe icon -->
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        English
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION BAR -->
+  <div class="notif-bar">
+    <p class="notif-text"><a href="#">View your newest notifications here.</a></p>
+    <div class="notif-arrows">
+      <button class="notif-arrow" aria-label="Previous notification">&#8592;</button>
+      <button class="notif-arrow" aria-label="Next notification">&#8594;</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="page-content">
+    <div class="features-grid">
+
+      <!-- 1 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <h2 class="feature-title">Simplify Legal Statutes</h2>
+        <p class="feature-desc">Convert complex IPC sections and acts into plain-language summaries.</p>
+      </div>
+
+      <!-- 2 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h2 class="feature-title">Draft Legal Notices</h2>
+        <p class="feature-desc">Generate initial drafts for workplace harassment or domestic disputes.</p>
+      </div>
+
+      <!-- 3 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/><polyline points="20 6 21.5 4.5"/></svg>
+        </div>
+        <h2 class="feature-title">Ask AI (Instant Rights Help)</h2>
+        <p class="feature-desc">Get instant, accurate answers to questions about your legal rights safely.</p>
+      </div>
+
+      <!-- 4 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M3 17h4m0 0v4m0-4H3v4h4"/><path d="M10 6.5H14M6.5 10v4"/></svg>
+        </div>
+        <h2 class="feature-title">Legal Procedure Mapper</h2>
+        <p class="feature-desc">Create step-by-step visual guides for filing an FIR or navigating a courtroom.</p>
+      </div>
+
+      <!-- 5 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M17.5 12h.5M6 12h.5"/></svg>
+        </div>
+        <h2 class="feature-title">Rights Awareness Hub</h2>
+        <p class="feature-desc">Interactive cases to learn about fundamental rights through scenarios.</p>
+      </div>
+
+      <!-- 6 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="12" cy="14" r="3"/><path d="M12 11v0M12 17v0"/></svg>
+        </div>
+        <h2 class="feature-title">Case Timeline Tracker</h2>
+        <p class="feature-desc">Organize your legal journey, from incident dates to upcoming hearings.</p>
+      </div>
+
+      <!-- 7 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h2 class="feature-title">Evidence Vault</h2>
+        <p class="feature-desc">Securely upload, timestamp, and organize digital evidence (chats, photos, audio).</p>
+      </div>
+
+      <!-- 8 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h2 class="feature-title">Voice Legal Assistant</h2>
+        <p class="feature-desc">Speak naturally in your regional language to receive instant verbal legal guidance.</p>
+      </div>
+
+      <!-- 9 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h2 class="feature-title">Support Directory</h2>
+        <p class="feature-desc">Access a verified list of NGOs, shelters, and pro-bono lawyers filtered by location.</p>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>
