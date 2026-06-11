@@ -1,6 +1,4 @@
 // ── AdhikarAI Firebase Configuration ──
-// Loaded before auth scripts on every page
-
 const firebaseConfig = {
   apiKey: "AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM",
   authDomain: "adhikarai-9a254.firebaseapp.com",
@@ -11,8 +9,12 @@ const firebaseConfig = {
   measurementId: "G-XDZ62163CR"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Only initialize if not already done (prevents duplicate app error)
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth    = firebase.auth();
 const db      = firebase.firestore();
-const storage = firebase.storage();
+// Storage only available on pages that load the storage SDK
+const storage = (typeof firebase.storage === 'function') ? firebase.storage() : null;
