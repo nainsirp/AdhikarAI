@@ -187,7 +187,7 @@
       </a>
     </div>
 
-    <p class="auth-switch">Have an account? <a href="login.html">Sign In</a></p>
+    <p class="auth-switch">Have an account? <a href="login.html?v=4">Sign In</a></p>
   </div>
 
   <!-- RIGHT: IMAGE -->
@@ -275,7 +275,7 @@
         await _auth.signOut();
 
         showAlert('Account created! Redirecting to login…', 'success');
-        setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+        setTimeout(() => { window.location.href = 'login.html?v=4'; }, 1500);
 
       } catch (err) {
         btnSubmit.disabled = false;

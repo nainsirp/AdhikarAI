@@ -180,7 +180,7 @@
       </a>
     </div>
 
-    <p class="auth-switch">Don't have an account? <a href="signup.html">Sign Up</a></p>
+    <p class="auth-switch">Don't have an account? <a href="signup.html?v=4">Sign Up</a></p>
   </div>
 
   <!-- RIGHT: IMAGE -->
@@ -249,14 +249,17 @@
       } catch (err) {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Sign In';
+        console.error('Login error:', err.code, err.message);
         const msgs = {
-          'auth/user-not-found':     'No account found with this email. Please sign up.',
-          'auth/wrong-password':     'Incorrect password. Try again or reset it.',
+          'auth/user-not-found':     'No account found with this email. Please sign up first.',
+          'auth/wrong-password':     'Incorrect password. Please try again.',
           'auth/invalid-email':      'Please enter a valid email address.',
-          'auth/too-many-requests':  'Too many attempts. Please wait a moment.',
-          'auth/invalid-credential': 'Incorrect email or password. Please try again.'
+          'auth/too-many-requests':  'Too many attempts. Please wait a moment and try again.',
+          'auth/invalid-credential': 'Incorrect email or password. Please check and try again.',
+          'auth/user-disabled':      'This account has been disabled. Contact support.',
+          'auth/network-request-failed': 'Network error. Please check your internet connection.'
         };
-        showAlert(msgs[err.code] || err.message);
+        showAlert(msgs[err.code] || 'Sign in failed: ' + (err.code || err.message));
       }
     });
 
