@@ -232,7 +232,7 @@
         : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
     });
 
-    // ── Login form submit ──
+    // ── Login form submit (direct REST API – bypasses SDK issues) ──
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email    = document.getElementById('login-email').value.trim();
@@ -243,24 +243,48 @@
       btnSubmit.textContent = 'Signing in…';
 
       try {
-        await _auth.signInWithEmailAndPassword(email, password);
-        showAlert('Signed in! Redirecting…', 'success');
+        // Call Firebase Auth REST API directly
+        const API_KEY = 'AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM';
+        const res = await fetch(
+          `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, returnSecureToken: true })
+          }
+        );
+        const data = await res.json();
+
+        if (!res.ok) {
+          // Show exact Firebase error for diagnosis
+          const code = data.error?.message || 'UNKNOWN';
+          const msgs = {
+            'INVALID_PASSWORD':          'Incorrect password. Please try again.',
+            'EMAIL_NOT_FOUND':           'No account found. Please sign up first.',
+            'USER_DISABLED':             'This account has been disabled.',
+            'TOO_MANY_ATTEMPTS_TRY_LATER':'Too many attempts. Please wait and try again.',
+            'INVALID_LOGIN_CREDENTIALS': 'Incorrect email or password. Please try again.',
+            'INVALID_EMAIL':             'Please enter a valid email address.'
+          };
+          console.error('Firebase REST error:', code, data);
+          throw new Error(msgs[code] || 'Login failed: ' + code);
+        }
+
+        // Success – save session to localStorage
+        localStorage.setItem('adhikarai_user', JSON.stringify({
+          uid:   data.localId,
+          email: data.email,
+          name:  data.displayName || email.split('@')[0],
+          token: data.idToken
+        }));
+
+        showAlert('Signed in successfully! Redirecting…', 'success');
         setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+
       } catch (err) {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Sign In';
-        console.error('Login error:', err.code, err.message);
-        const msgs = {
-          'auth/user-not-found':          'No account found with this email. Please sign up first.',
-          'auth/wrong-password':          'Incorrect password. Use "Forgot password?" to reset it.',
-          'auth/invalid-email':           'Please enter a valid email address.',
-          'auth/too-many-requests':       'Too many attempts. Please wait a moment and try again.',
-          'auth/invalid-credential':      'Incorrect email or password. Please check and try again.',
-          'auth/invalid-login-credentials':'Incorrect email or password. Please check and try again.',
-          'auth/user-disabled':           'This account has been disabled. Contact support.',
-          'auth/network-request-failed':  'Network error. Please check your internet connection.'
-        };
-        showAlert(msgs[err.code] || 'Sign in failed: ' + (err.code || err.message));
+        showAlert(err.message || 'Sign in failed. Please try again.');
       }
     });
 
