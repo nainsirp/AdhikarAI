@@ -251,13 +251,14 @@
         btnSubmit.textContent = 'Sign In';
         console.error('Login error:', err.code, err.message);
         const msgs = {
-          'auth/user-not-found':     'No account found with this email. Please sign up first.',
-          'auth/wrong-password':     'Incorrect password. Please try again.',
-          'auth/invalid-email':      'Please enter a valid email address.',
-          'auth/too-many-requests':  'Too many attempts. Please wait a moment and try again.',
-          'auth/invalid-credential': 'Incorrect email or password. Please check and try again.',
-          'auth/user-disabled':      'This account has been disabled. Contact support.',
-          'auth/network-request-failed': 'Network error. Please check your internet connection.'
+          'auth/user-not-found':          'No account found with this email. Please sign up first.',
+          'auth/wrong-password':          'Incorrect password. Use "Forgot password?" to reset it.',
+          'auth/invalid-email':           'Please enter a valid email address.',
+          'auth/too-many-requests':       'Too many attempts. Please wait a moment and try again.',
+          'auth/invalid-credential':      'Incorrect email or password. Please check and try again.',
+          'auth/invalid-login-credentials':'Incorrect email or password. Please check and try again.',
+          'auth/user-disabled':           'This account has been disabled. Contact support.',
+          'auth/network-request-failed':  'Network error. Please check your internet connection.'
         };
         showAlert(msgs[err.code] || 'Sign in failed: ' + (err.code || err.message));
       }
