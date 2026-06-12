@@ -257,19 +257,17 @@
 
         if (!res.ok) {
           const code = data.error?.message || 'UNKNOWN';
-          // Show full raw response so we can diagnose
           console.error('Firebase REST full response:', JSON.stringify(data));
-          const msgs = {
-            'INVALID_PASSWORD':           'Incorrect password. Please try again.',
-            'EMAIL_NOT_FOUND':            'No account found. Please sign up first.',
-            'USER_DISABLED':              'This account has been disabled.',
-            'TOO_MANY_ATTEMPTS_TRY_LATER':'Too many attempts. Please wait and try again.',
-            'INVALID_LOGIN_CREDENTIALS':  'Incorrect email or password. Please try again.',
-            'INVALID_EMAIL':              'Please enter a valid email address.'
-          };
-          const friendly = msgs[code];
-          // Show raw code too so user can report it
-          throw new Error((friendly || 'Login failed') + ' [Code: ' + code + ']');
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = 'Sign In';
+          if (code === 'INVALID_LOGIN_CREDENTIALS' || code === 'INVALID_PASSWORD' || code === 'EMAIL_NOT_FOUND') {
+            showAlert('Incorrect email or password. Try "Forgot password?" below to reset it. [Code: ' + code + ']');
+          } else if (code === 'TOO_MANY_ATTEMPTS_TRY_LATER') {
+            showAlert('Too many failed attempts. Please wait a few minutes and try again.');
+          } else {
+            showAlert('Login failed [Code: ' + code + ']. Please try again.');
+          }
+          return;
         }
 
         // Success – save session to localStorage
@@ -290,16 +288,26 @@
       }
     });
 
-    // ── Forgot Password ──
+    // ── Forgot Password (REST API) ──
     document.getElementById('forgot-link').addEventListener('click', async (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
       if (!email) return showAlert('Enter your email above first, then click Forgot password.');
       try {
-        await _auth.sendPasswordResetEmail(email);
-        showAlert('Reset email sent! Check your inbox.', 'success');
+        const API_KEY = 'AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM';
+        const res = await fetch(
+          `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ requestType: 'PASSWORD_RESET', email })
+          }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || 'Failed to send reset email');
+        showAlert('Password reset email sent to ' + email + '! Check your inbox (and spam folder).', 'success');
       } catch (err) {
-        showAlert('Could not send reset email. Check the email address.');
+        showAlert('Could not send reset email: ' + err.message);
       }
     });
 
