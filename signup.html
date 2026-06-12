@@ -329,8 +329,16 @@
           console.warn('Firestore save failed (non-critical):', fsErr);
         }
 
-        showAlert('Account created! Redirecting to login…', 'success');
-        setTimeout(() => { window.location.href = 'login.html?v=4'; }, 1500);
+        // Auto-login: signup already returned a valid session token
+        localStorage.setItem('adhikarai_user', JSON.stringify({
+          uid:   uid,
+          email: signupData.email,
+          name:  name,
+          token: idToken
+        }));
+
+        showAlert('Account created! Logging you in…', 'success');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
 
       } catch (err) {
         btnSubmit.disabled = false;

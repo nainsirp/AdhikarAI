@@ -256,18 +256,20 @@
         const data = await res.json();
 
         if (!res.ok) {
-          // Show exact Firebase error for diagnosis
           const code = data.error?.message || 'UNKNOWN';
+          // Show full raw response so we can diagnose
+          console.error('Firebase REST full response:', JSON.stringify(data));
           const msgs = {
-            'INVALID_PASSWORD':          'Incorrect password. Please try again.',
-            'EMAIL_NOT_FOUND':           'No account found. Please sign up first.',
-            'USER_DISABLED':             'This account has been disabled.',
+            'INVALID_PASSWORD':           'Incorrect password. Please try again.',
+            'EMAIL_NOT_FOUND':            'No account found. Please sign up first.',
+            'USER_DISABLED':              'This account has been disabled.',
             'TOO_MANY_ATTEMPTS_TRY_LATER':'Too many attempts. Please wait and try again.',
-            'INVALID_LOGIN_CREDENTIALS': 'Incorrect email or password. Please try again.',
-            'INVALID_EMAIL':             'Please enter a valid email address.'
+            'INVALID_LOGIN_CREDENTIALS':  'Incorrect email or password. Please try again.',
+            'INVALID_EMAIL':              'Please enter a valid email address.'
           };
-          console.error('Firebase REST error:', code, data);
-          throw new Error(msgs[code] || 'Login failed: ' + code);
+          const friendly = msgs[code];
+          // Show raw code too so user can report it
+          throw new Error((friendly || 'Login failed') + ' [Code: ' + code + ']');
         }
 
         // Success – save session to localStorage
