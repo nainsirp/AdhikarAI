@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evidence Vault – AdhikarAI</title>
+  <meta name="description" content="Securely upload and store your evidence — documents, images, videos, and audio — in your private AdhikarAI vault." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --crimson: #8B1A1A; --crimson-dk: #6B1212;
+      --charcoal: #1A1A1A; --mid-gray: #6B7280;
+      --border: #E8E8E8; --warm-gray: #F5F5F5;
+      --white: #FFFFFF; --font: 'Inter', system-ui, sans-serif;
+      --col-img: #7C3AED; --col-vid: #DC2626;
+      --col-aud: #059669; --col-doc: #2563EB; --col-other: #6B7280;
+    }
+    body { font-family: var(--font); background: var(--warm-gray); color: var(--charcoal); min-height: 100vh; }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px; height: 62px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-size: 1.15rem; font-weight: 700; text-decoration: none; }
+    .logo-adhikar { color: var(--charcoal); } .logo-ai { color: var(--crimson); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 500; color: var(--mid-gray);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      border: 1px solid var(--border); transition: all 0.2s;
+    }
+    .nav-back:hover { color: var(--crimson); border-color: var(--crimson); background: #fef2f2; }
+    .user-chip {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; font-weight: 500; color: var(--mid-gray);
+    }
+    .user-chip-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--crimson), var(--crimson-dk));
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+    }
+
+    /* ── PAGE HERO ── */
+    .vault-hero {
+      background: linear-gradient(135deg, #1a0505 0%, #3d0f0f 50%, #1a0505 100%);
+      padding: 40px 48px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .vault-hero-left {}
+    .vault-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px; padding: 4px 12px;
+      font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.8);
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .vault-title { font-size: 1.9rem; font-weight: 800; color: #fff; line-height: 1.2; }
+    .vault-subtitle { font-size: 0.88rem; color: rgba(255,255,255,0.65); margin-top: 8px; max-width: 420px; line-height: 1.6; }
+    .vault-stats { display: flex; gap: 24px; margin-top: 20px; }
+    .vault-stat { text-align: center; }
+    .vault-stat-num { font-size: 1.5rem; font-weight: 800; color: #fff; }
+    .vault-stat-lbl { font-size: 0.7rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+    .vault-icon-big {
+      width: 96px; height: 96px; border-radius: 20px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .vault-body { max-width: 1060px; margin: 0 auto; padding: 32px 24px 64px; }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 2px dashed #D0D0D0;
+      border-radius: 16px; background: var(--white);
+      padding: 48px 32px; text-align: center;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+      cursor: pointer; margin-bottom: 28px;
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--crimson);
+      background: #fef9f9;
+      transform: scale(1.005);
+    }
+    .upload-zone.uploading { pointer-events: none; opacity: 0.8; }
+    .upload-icon-wrap {
+      width: 64px; height: 64px; border-radius: 16px;
+      background: linear-gradient(135deg, #fef2f2, #fde8e8);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .upload-zone h3 { font-size: 1rem; font-weight: 700; color: var(--charcoal); margin-bottom: 6px; }
+    .upload-zone p { font-size: 0.82rem; color: var(--mid-gray); margin-bottom: 16px; line-height: 1.5; }
+    .upload-types { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+    .type-chip {
+      padding: 4px 12px; border-radius: 50px; font-size: 0.72rem; font-weight: 600;
+      border: 1.5px solid;
+    }
+    .chip-img { color: var(--col-img); border-color: #c4b5fd; background: #f5f3ff; }
+    .chip-vid { color: var(--col-vid); border-color: #fca5a5; background: #fef2f2; }
+    .chip-aud { color: var(--col-aud); border-color: #6ee7b7; background: #ecfdf5; }
+    .chip-doc { color: var(--col-doc); border-color: #93c5fd; background: #eff6ff; }
+    .btn-browse {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--crimson); color: #fff;
+      padding: 10px 24px; border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; border: none; cursor: pointer;
+      font-family: var(--font); transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-browse:hover { background: var(--crimson-dk); box-shadow: 0 4px 14px rgba(139,26,26,0.3); }
+    input#file-input { display: none; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap { margin-bottom: 20px; display: none; }
+    .progress-bar-bg { height: 6px; background: #f0f0f0; border-radius: 50px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--crimson), #c0392b); border-radius: 50px; width: 0%; transition: width 0.3s ease; }
+    .progress-label { font-size: 0.78rem; color: var(--mid-gray); margin-top: 8px; }
+
+    /* ── ALERT ── */
+    .vault-alert { padding: 12px 16px; border-radius: 10px; font-size: 0.82rem; font-weight: 500; margin-bottom: 20px; display: none; }
+    .vault-alert.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .vault-alert.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* ── FILTER TABS ── */
+    .filter-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+    .filter-tabs { display: flex; gap: 6px; }
+    .filter-tab {
+      padding: 7px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 500;
+      border: 1.5px solid var(--border); background: var(--white);
+      color: var(--mid-gray); cursor: pointer; transition: all 0.2s; font-family: var(--font);
+    }
+    .filter-tab.active { background: var(--crimson); color: #fff; border-color: var(--crimson); }
+    .filter-tab:hover:not(.active) { border-color: var(--crimson); color: var(--crimson); }
+    .files-count { font-size: 0.8rem; color: var(--mid-gray); font-weight: 500; }
+
+    /* ── FILES GRID ── */
+    .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+    .file-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .file-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+    .file-preview {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      display: block; background: #f9f9f9;
+    }
+    .file-icon-preview {
+      width: 100%; aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 8px;
+    }
+    .file-icon-preview.img-type  { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+    .file-icon-preview.vid-type  { background: linear-gradient(135deg, #fef2f2, #fee2e2); }
+    .file-icon-preview.aud-type  { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+    .file-icon-preview.doc-type  { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+    .file-icon-preview.other-type { background: linear-gradient(135deg, #f9fafb, #f3f4f6); }
+    .file-icon-preview svg { width: 40px; height: 40px; }
+    .file-ext { font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .file-info { padding: 12px 14px; }
+    .file-name { font-size: 0.8rem; font-weight: 600; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .file-meta { font-size: 0.7rem; color: var(--mid-gray); display: flex; align-items: center; justify-content: space-between; }
+    .file-actions { display: flex; gap: 6px; padding: 0 14px 12px; }
+    .btn-action {
+      flex: 1; padding: 6px 0; border-radius: 8px; font-size: 0.72rem; font-weight: 600;
+      border: 1.5px solid var(--border); background: var(--white);
+      cursor: pointer; font-family: var(--font);
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      transition: all 0.15s; color: var(--mid-gray);
+    }
+    .btn-action.download:hover { border-color: var(--col-doc); color: var(--col-doc); background: #eff6ff; }
+    .btn-action.delete:hover { border-color: var(--col-vid); color: var(--col-vid); background: #fef2f2; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 60px 24px; display: none; }
+    .empty-state svg { width: 80px; height: 80px; stroke: #D0D0D0; margin: 0 auto 20px; display: block; }
+    .empty-state h3 { font-size: 1rem; font-weight: 700; color: #9CA3AF; margin-bottom: 6px; }
+    .empty-state p { font-size: 0.82rem; color: #C0C0C0; }
+
+    /* ── LOGIN PROMPT ── */
+    .login-prompt {
+      text-align: center; padding: 80px 24px;
+      background: var(--white); border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .login-prompt h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+    .login-prompt p { font-size: 0.85rem; color: var(--mid-gray); margin-bottom: 24px; }
+    .btn-login-prompt {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--crimson); color: #fff; padding: 12px 28px;
+      border-radius: 10px; font-size: 0.88rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .btn-login-prompt:hover { background: var(--crimson-dk); }
+
+    /* ── LOADING ── */
+    .files-loading { text-align: center; padding: 40px; color: var(--mid-gray); font-size: 0.85rem; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top-color: var(--crimson); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .navbar { padding: 0 20px; }
+      .vault-hero { padding: 28px 20px; flex-direction: column; }
+      .vault-icon-big { display: none; }
+      .vault-body { padding: 20px 16px 48px; }
+      .files-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .filter-tabs { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
+    </a>
+    <div class="nav-right">
+      <a href="features.html" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        All Features
+      </a>
+      <div class="user-chip" id="user-chip" style="display:none">
+        <div class="user-chip-avatar" id="chip-avatar">U</div>
+        <span id="chip-name">User</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- VAULT HERO -->
+  <div class="vault-hero">
+    <div class="vault-hero-left">
+      <div class="vault-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        Secure Evidence Vault
+      </div>
+      <h1 class="vault-title">Your Private<br/>Evidence Vault</h1>
+      <p class="vault-subtitle">Upload and securely store documents, photos, videos, and audio recordings. All files are encrypted and backed up to your private account.</p>
+      <div class="vault-stats">
+        <div class="vault-stat"><div class="vault-stat-num" id="stat-total">0</div><div class="vault-stat-lbl">Files Stored</div></div>
+        <div class="vault-stat"><div class="vault-stat-num" id="stat-size">0 MB</div><div class="vault-stat-lbl">Storage Used</div></div>
+      </div>
+    </div>
+    <div class="vault-icon-big">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        <circle cx="12" cy="16" r="1" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- MAIN BODY -->
+  <div class="vault-body">
+
+    <!-- NOT LOGGED IN STATE -->
+    <div id="login-prompt" class="login-prompt" style="display:none">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#D0D0D0" stroke-width="1.5" style="margin:0 auto 16px;display:block"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <h2>Sign In to Access Your Vault</h2>
+      <p>Your evidence is private and linked to your account. Please sign in to upload and view your files.</p>
+      <a href="login.html?v=4" class="btn-login-prompt">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In to Continue
+      </a>
+    </div>
+
+    <!-- LOGGED IN STATE -->
+    <div id="vault-content" style="display:none">
+
+      <!-- Upload Zone -->
+      <div class="upload-zone" id="upload-zone">
+        <div class="upload-icon-wrap">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--crimson)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+        </div>
+        <h3>Drop your evidence files here</h3>
+        <p>Drag & drop files here, or click to browse from your device.<br/>All files are stored securely in your private vault.</p>
+        <div class="upload-types">
+          <span class="type-chip chip-img">📷 Images</span>
+          <span class="type-chip chip-vid">🎬 Videos</span>
+          <span class="type-chip chip-aud">🎵 Audio</span>
+          <span class="type-chip chip-doc">📄 Documents</span>
+        </div>
+        <button class="btn-browse" id="btn-browse">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Choose Files
+        </button>
+        <input type="file" id="file-input" multiple accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.xlsx,.pptx,.zip" />
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">Uploading…</div>
+      </div>
+
+      <!-- Alert -->
+      <div class="vault-alert" id="vault-alert"></div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-filter="all">All</button>
+          <button class="filter-tab" data-filter="image">Images</button>
+          <button class="filter-tab" data-filter="video">Videos</button>
+          <button class="filter-tab" data-filter="audio">Audio</button>
+          <button class="filter-tab" data-filter="document">Documents</button>
+        </div>
+        <span class="files-count" id="files-count">0 files</span>
+      </div>
+
+      <!-- Files Grid -->
+      <div id="files-loading" class="files-loading" style="display:none">
+        <span class="spinner"></span>Loading your files…
+      </div>
+      <div class="files-grid" id="files-grid"></div>
+      <div class="empty-state" id="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        <h3>No files yet</h3>
+        <p>Upload your first evidence file above to get started.</p>
+      </div>
+
+    </div><!-- end vault-content -->
+  </div><!-- end vault-body -->
+
+  <script>
+  (function () {
+    /* ── Config ── */
+    const API_KEY   = 'AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM';
+    const PROJECT   = 'adhikarai-9a254';
+    const BUCKET    = 'adhikarai-9a254.firebasestorage.app';
+    const FS_BASE   = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
+    const ST_BASE   = `https://firebasestorage.googleapis.com/v0/b/${BUCKET}/o`;
+
+    /* ── Session ── */
+    let session = null;
+    try { session = JSON.parse(localStorage.getItem('adhikarai_user')); } catch(e) {}
+
+    /* ── State ── */
+    let allFiles    = [];
+    let activeFilter = 'all';
+
+    /* ── Init ── */
+    if (!session || !session.uid) {
+      document.getElementById('login-prompt').style.display = 'block';
+    } else {
+      document.getElementById('vault-content').style.display = 'block';
+      document.getElementById('user-chip').style.display = 'flex';
+      const initial = (session.name || session.email || 'U')[0].toUpperCase();
+      document.getElementById('chip-avatar').textContent = initial;
+      document.getElementById('chip-name').textContent   = session.name || session.email;
+      loadFiles();
+      setupUpload();
+      setupFilters();
+    }
+
+    /* ── Helpers ── */
+    function showAlert(msg, type = 'error') {
+      const el = document.getElementById('vault-alert');
+      el.textContent = msg; el.className = 'vault-alert ' + type;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+    }
+
+    function formatDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function getFileCategory(mimeType, name) {
+      if (!mimeType) mimeType = '';
+      if (mimeType.startsWith('image/')) return 'image';
+      if (mimeType.startsWith('video/')) return 'video';
+      if (mimeType.startsWith('audio/')) return 'audio';
+      const ext = (name || '').split('.').pop().toLowerCase();
+      if (['pdf','doc','docx','txt','xlsx','pptx','csv','odt'].includes(ext)) return 'document';
+      if (['jpg','jpeg','png','gif','webp','bmp','svg'].includes(ext)) return 'image';
+      if (['mp4','mov','avi','mkv','webm'].includes(ext)) return 'video';
+      if (['mp3','wav','m4a','ogg','flac','aac'].includes(ext)) return 'audio';
+      return 'other';
+    }
+
+    function getCategoryColor(cat) {
+      return { image:'var(--col-img)', video:'var(--col-vid)', audio:'var(--col-aud)', document:'var(--col-doc)', other:'var(--col-other)' }[cat] || 'var(--col-other)';
+    }
+
+    function getCategoryClass(cat) {
+      return { image:'img-type', video:'vid-type', audio:'aud-type', document:'doc-type', other:'other-type' }[cat] || 'other-type';
+    }
+
+    function getCategoryIcon(cat) {
+      const icons = {
+        image: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--col-img)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+        video: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--col-vid)" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
+        audio: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--col-aud)" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+        document: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--col-doc)" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+        other: `<svg viewBox="0 0 24 24" fill="none" stroke="var(--col-other)" stroke-width="1.5" stroke-linecap="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>`
+      };
+      return icons[cat] || icons.other;
+    }
+
+    /* ── Load Files from Firestore ── */
+    async function loadFiles() {
+      document.getElementById('files-loading').style.display = 'block';
+      document.getElementById('files-grid').innerHTML = '';
+      document.getElementById('empty-state').style.display = 'none';
+      try {
+        const res = await fetch(
+          `${FS_BASE}/users/${session.uid}/evidence`,
+          { headers: { 'Authorization': `Bearer ${session.token}` } }
+        );
+        const data = await res.json();
+        allFiles = [];
+        if (data.documents) {
+          allFiles = data.documents.map(doc => {
+            const f = doc.fields;
+            const docId = doc.name.split('/').pop();
+            return {
+              id: docId,
+              fileName:   f.fileName?.stringValue   || 'Unknown',
+              mimeType:   f.mimeType?.stringValue    || '',
+              fileSize:   parseInt(f.fileSize?.integerValue || f.fileSize?.doubleValue || 0),
+              downloadUrl: f.downloadUrl?.stringValue || '',
+              uploadedAt: f.uploadedAt?.timestampValue || new Date().toISOString(),
+              category:   f.category?.stringValue    || 'other'
+            };
+          }).sort((a,b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+        }
+        renderFiles();
+        updateStats();
+      } catch(err) {
+        console.error('Load error:', err);
+        showAlert('Could not load files. Please refresh and try again.');
+      } finally {
+        document.getElementById('files-loading').style.display = 'none';
+      }
+    }
+
+    /* ── Render Files ── */
+    function renderFiles() {
+      const grid = document.getElementById('files-grid');
+      const emptyState = document.getElementById('empty-state');
+      const filtered = activeFilter === 'all' ? allFiles : allFiles.filter(f => f.category === activeFilter);
+      document.getElementById('files-count').textContent = filtered.length + ' file' + (filtered.length !== 1 ? 's' : '');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      emptyState.style.display = 'none';
+
+      grid.innerHTML = filtered.map(file => {
+        const cat  = file.category || 'other';
+        const ext  = file.fileName.split('.').pop().toUpperCase();
+        const isImg = cat === 'image' && file.downloadUrl;
+        const preview = isImg
+          ? `<img class="file-preview" src="${file.downloadUrl}" alt="${file.fileName}" loading="lazy" onerror="this.parentElement.innerHTML=getIconPreview('${cat}','${ext}')" />`
+          : `<div class="file-icon-preview ${getCategoryClass(cat)}">${getCategoryIcon(cat)}<span class="file-ext" style="color:${getCategoryColor(cat)}">${ext}</span></div>`;
+
+        return `
+          <div class="file-card" data-id="${file.id}">
+            ${preview}
+            <div class="file-info">
+              <div class="file-name" title="${file.fileName}">${file.fileName}</div>
+              <div class="file-meta">
+                <span>${formatSize(file.fileSize)}</span>
+                <span>${formatDate(file.uploadedAt)}</span>
+              </div>
+            </div>
+            <div class="file-actions">
+              <button class="btn-action download" onclick="downloadFile('${file.downloadUrl}','${file.fileName}')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+                Download
+              </button>
+              <button class="btn-action delete" onclick="deleteFile('${file.id}','${file.fileName}')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Delete
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    /* ── Update Stats ── */
+    function updateStats() {
+      document.getElementById('stat-total').textContent = allFiles.length;
+      const totalBytes = allFiles.reduce((sum, f) => sum + (f.fileSize || 0), 0);
+      document.getElementById('stat-size').textContent = formatSize(totalBytes);
+    }
+
+    /* ── Filters ── */
+    function setupFilters() {
+      document.getElementById('filter-tabs').addEventListener('click', e => {
+        const btn = e.target.closest('.filter-tab');
+        if (!btn) return;
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderFiles();
+      });
+    }
+
+    /* ── Upload ── */
+    function setupUpload() {
+      const zone     = document.getElementById('upload-zone');
+      const input    = document.getElementById('file-input');
+      const btnBrowse = document.getElementById('btn-browse');
+
+      btnBrowse.addEventListener('click', () => input.click());
+      zone.addEventListener('click', e => { if (e.target === zone || e.target.closest('.upload-zone') && !e.target.closest('button')) input.click(); });
+      input.addEventListener('change', () => { if (input.files.length) uploadFiles(Array.from(input.files)); });
+
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length) uploadFiles(files);
+      });
+    }
+
+    async function uploadFiles(files) {
+      const zone = document.getElementById('upload-zone');
+      const progressWrap = document.getElementById('progress-wrap');
+      const progressFill = document.getElementById('progress-fill');
+      const progressLabel = document.getElementById('progress-label');
+
+      zone.classList.add('uploading');
+      progressWrap.style.display = 'block';
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const pct  = Math.round(((i) / files.length) * 100);
+        progressFill.style.width  = pct + '%';
+        progressLabel.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
+
+        try {
+          await uploadSingleFile(file);
+        } catch (err) {
+          console.error('Upload error:', err);
+          showAlert(`Failed to upload "${file.name}": ${err.message}`);
+        }
+      }
+
+      progressFill.style.width  = '100%';
+      progressLabel.textContent  = 'All files uploaded!';
+      setTimeout(() => { progressWrap.style.display = 'none'; progressFill.style.width = '0%'; }, 2000);
+
+      zone.classList.remove('uploading');
+      document.getElementById('file-input').value = '';
+      showAlert(`${files.length} file${files.length > 1 ? 's' : ''} uploaded successfully!`, 'success');
+      await loadFiles();
+    }
+
+    async function uploadSingleFile(file) {
+      const timestamp  = Date.now();
+      const safeName   = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const storagePath = `users/${session.uid}/evidence/${timestamp}_${safeName}`;
+      const category   = getFileCategory(file.type, file.name);
+
+      /* 1. Upload to Firebase Storage */
+      const uploadRes = await fetch(
+        `${ST_BASE}?uploadType=media&name=${encodeURIComponent(storagePath)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type || 'application/octet-stream',
+            'Authorization': `Bearer ${session.token}`
+          },
+          body: file
+        }
+      );
+
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json().catch(() => ({}));
+        const msg = err.error?.message || uploadRes.status;
+        if (uploadRes.status === 403) throw new Error('Storage access denied. Please update Firebase Storage rules (allow authenticated users).');
+        throw new Error('Storage upload failed: ' + msg);
+      }
+
+      const uploadData = await uploadRes.json();
+      const token = uploadData.downloadTokens;
+      const encodedPath = encodeURIComponent(storagePath).replace(/%2F/g, '%2F');
+      const downloadUrl = `${ST_BASE}/${encodedPath}?alt=media&token=${token}`;
+
+      /* 2. Save metadata to Firestore */
+      const fsRes = await fetch(
+        `${FS_BASE}/users/${session.uid}/evidence`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.token}`
+          },
+          body: JSON.stringify({
+            fields: {
+              fileName:    { stringValue: file.name },
+              mimeType:    { stringValue: file.type || 'application/octet-stream' },
+              fileSize:    { integerValue: String(file.size) },
+              storagePath: { stringValue: storagePath },
+              downloadUrl: { stringValue: downloadUrl },
+              category:    { stringValue: category },
+              uploadedAt:  { timestampValue: new Date().toISOString() }
+            }
+          })
+        }
+      );
+
+      if (!fsRes.ok) {
+        const err = await fsRes.json().catch(() => ({}));
+        throw new Error('Metadata save failed: ' + (err.error?.message || fsRes.status));
+      }
+    }
+
+    /* ── Download ── */
+    window.downloadFile = function(url, name) {
+      if (!url) return showAlert('Download link not available.');
+      const a = document.createElement('a');
+      a.href = url; a.download = name; a.target = '_blank';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    };
+
+    /* ── Delete ── */
+    window.deleteFile = async function(docId, fileName) {
+      if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return;
+      try {
+        // Delete Firestore doc
+        const res = await fetch(
+          `${FS_BASE}/users/${session.uid}/evidence/${docId}`,
+          { method: 'DELETE', headers: { 'Authorization': `Bearer ${session.token}` } }
+        );
+        if (!res.ok) throw new Error('Delete failed');
+        showAlert(`"${fileName}" deleted.`, 'success');
+        allFiles = allFiles.filter(f => f.id !== docId);
+        renderFiles();
+        updateStats();
+      } catch(err) {
+        showAlert('Could not delete file. Please try again.');
+      }
+    };
+
+    /* ── Icon helper (used in onerror) ── */
+    window.getIconPreview = function(cat, ext) {
+      return `<div class="file-icon-preview ${getCategoryClass(cat)}">${getCategoryIcon(cat)}<span class="file-ext" style="color:${getCategoryColor(cat)}">${ext}</span></div>`;
+    };
+
+  })();
+  </script>
+</body>
+</html>
