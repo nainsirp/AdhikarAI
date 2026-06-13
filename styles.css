@@ -167,6 +167,146 @@ ul { list-style: none; }
   box-shadow: 0 4px 12px rgba(139,26,26,0.25);
 }
 
+/* ======================== USER PROFILE ======================== */
+.user-profile {
+  position: relative;
+  display: none;
+  align-items: center;
+}
+
+.user-avatar-btn {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--crimson), var(--crimson-dk));
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 2.5px solid rgba(255,255,255,0.8);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-main);
+  box-shadow: 0 2px 10px rgba(139,26,26,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0;
+}
+.user-avatar-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 18px rgba(139,26,26,0.4);
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: 252px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 2000;
+  overflow: hidden;
+}
+.profile-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fef2f2, #fff9f9);
+  border-bottom: 1px solid #f3e8e8;
+}
+.profile-avatar-lg {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--crimson), var(--crimson-dk));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem; font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(139,26,26,0.25);
+}
+.profile-info { overflow: hidden; }
+.profile-name {
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--charcoal);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.profile-email {
+  font-size: 0.73rem; color: var(--mid-gray);
+  margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.profile-divider { height: 1px; background: #f3f4f6; margin: 4px 0; }
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+  border: none; background: none; width: 100%; text-align: left;
+  font-family: var(--font-main);
+}
+.profile-menu-item:hover {
+  background: #fef2f2;
+  color: var(--crimson);
+}
+.profile-menu-item svg { flex-shrink: 0; opacity: 0.65; }
+.profile-menu-item:hover svg { opacity: 1; }
+
+.profile-signout {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 10px 16px;
+  font-size: 0.82rem; font-weight: 500;
+  color: #dc2626;
+  background: none; border: none; cursor: pointer;
+  text-align: left; font-family: var(--font-main);
+  transition: background 0.15s;
+  margin-top: 2px;
+}
+.profile-signout:hover { background: #fef2f2; }
+
+/* Greeting badge on hero for logged-in users */
+.user-greeting {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50px;
+  padding: 6px 14px 6px 8px;
+  font-size: 0.8rem;
+  color: #fff;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.user-greeting .greeting-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--crimson), #c0392b);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+}
+
+
 
 .mobile-menu {
   display: none;

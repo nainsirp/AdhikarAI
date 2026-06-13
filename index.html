@@ -24,9 +24,43 @@
         <a href="#how-it-works" class="nav-link">How it works</a>
         <a href="#features" class="nav-link">Features</a>
       </nav>
-      <div class="nav-actions">
+      <div class="nav-actions" id="nav-actions">
         <a href="login.html?v=4" class="btn-login" id="btn-login">Log In</a>
         <a href="signup.html?v=4" class="btn-signup" id="btn-signup">Sign Up</a>
+
+        <!-- Profile (shown when logged in) -->
+        <div class="user-profile" id="user-profile">
+          <button class="user-avatar-btn" id="user-avatar-btn" aria-label="User profile">
+            <span id="user-initial">U</span>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+              <div class="profile-avatar-lg"><span id="profile-initial-lg">U</span></div>
+              <div class="profile-info">
+                <p class="profile-name" id="profile-name">User</p>
+                <p class="profile-email" id="profile-email">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-divider"></div>
+            <a href="#" class="profile-menu-item" id="menu-my-docs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              My Documents
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-chat-history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat History
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Account Settings
+            </a>
+            <div class="profile-divider"></div>
+            <button class="profile-signout" id="signout-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
       </div>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
@@ -350,5 +384,97 @@
   </main>
 
   <script src="script.js"></script>
+
+  <!-- ── Session Management ── -->
+  <script>
+  (function () {
+    const SESSION_KEY = 'adhikarai_user';
+    const API_KEY = 'AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM';
+
+    // ── Read session from localStorage ──
+    let session = null;
+    try { session = JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) {}
+
+    const btnLogin   = document.getElementById('btn-login');
+    const btnSignup  = document.getElementById('btn-signup');
+    const profileEl  = document.getElementById('user-profile');
+
+    if (session && session.uid) {
+      // ── LOGGED IN: show profile, hide buttons ──
+      btnLogin.style.display  = 'none';
+      btnSignup.style.display = 'none';
+      profileEl.style.display = 'flex';
+
+      const initial = (session.name || session.email || 'U')[0].toUpperCase();
+      document.getElementById('user-initial').textContent      = initial;
+      document.getElementById('profile-initial-lg').textContent = initial;
+      document.getElementById('profile-name').textContent      = session.name  || 'User';
+      document.getElementById('profile-email').textContent     = session.email || '';
+
+      // ── Fetch fresh user data from Firestore ──
+      fetch(
+        `https://firestore.googleapis.com/v1/projects/adhikarai-9a254/databases/(default)/documents/users/${session.uid}`,
+        { headers: { 'Authorization': 'Bearer ' + session.token } }
+      )
+      .then(r => r.json())
+      .then(doc => {
+        if (doc.fields) {
+          const name = doc.fields.name?.stringValue;
+          if (name) {
+            session.name = name;
+            localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+            document.getElementById('profile-name').textContent      = name;
+            const upd = name[0].toUpperCase();
+            document.getElementById('user-initial').textContent       = upd;
+            document.getElementById('profile-initial-lg').textContent = upd;
+          }
+        }
+      })
+      .catch(() => { /* silent – offline or token expired */ });
+
+    } else {
+      // ── NOT LOGGED IN: show login/signup buttons ──
+      btnLogin.style.display  = '';
+      btnSignup.style.display = '';
+      profileEl.style.display = 'none';
+    }
+
+    // ── Toggle dropdown ──
+    const avatarBtn  = document.getElementById('user-avatar-btn');
+    const dropdown   = document.getElementById('profile-dropdown');
+    if (avatarBtn) {
+      avatarBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', function () {
+        dropdown.classList.remove('open');
+      });
+      dropdown.addEventListener('click', function (e) {
+        e.stopPropagation();
+      });
+    }
+
+    // ── Sign Out ──
+    const signoutBtn = document.getElementById('signout-btn');
+    if (signoutBtn) {
+      signoutBtn.addEventListener('click', async function () {
+        // Revoke Firebase token (best effort)
+        if (session && session.token) {
+          fetch(
+            `https://identitytoolkit.googleapis.com/v1/accounts:revokeToken?key=${API_KEY}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ providerId: 'password', tokenType: 'REFRESH_TOKEN' })
+            }
+          ).catch(() => {});
+        }
+        localStorage.removeItem(SESSION_KEY);
+        window.location.href = 'index.html';
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
