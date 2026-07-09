@@ -21,7 +21,7 @@
       <nav class="nav-links">
         <a href="#home" class="nav-link active">Home</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="#how-it-works" class="nav-link">How it works</a>
+        <a href="how-it-works.html" class="nav-link">How it works</a>
         <a href="#features" class="nav-link">Features</a>
       </nav>
       <div class="nav-actions" id="nav-actions">
@@ -69,7 +69,7 @@
     <div class="mobile-menu" id="mobile-menu">
       <a href="#home" class="mobile-link">Home</a>
       <a href="#about" class="mobile-link">About</a>
-      <a href="#how-it-works" class="mobile-link">How it works</a>
+      <a href="how-it-works.html" class="mobile-link">How it works</a>
       <a href="#features" class="mobile-link">Features</a>
       <a href="login.html" class="mobile-link">Log In</a>
       <a href="#" class="mobile-link signup-mobile">Sign Up</a>
@@ -291,7 +291,7 @@
     </section>
 
     <!-- ==================== NEWSLETTER ==================== -->
-    <section class="newsletter-section" id="how-it-works">
+    <section class="newsletter-section" id="newsletter">
       <div class="container">
         <div class="newsletter-card">
           <div class="newsletter-badge">Newsletter</div>
@@ -387,7 +387,7 @@
 
   <!-- ── Session Management ── -->
   <script>
-  (function () {
+  document.addEventListener('DOMContentLoaded', () => {
     const SESSION_KEY = 'adhikarai_user';
     const API_KEY = 'AIzaSyBAyXlI1vcS58JidjJuBvn3G60qAb2brjM';
 
@@ -401,15 +401,20 @@
 
     if (session && session.uid) {
       // ── LOGGED IN: show profile, hide buttons ──
-      btnLogin.style.display  = 'none';
-      btnSignup.style.display = 'none';
-      profileEl.style.display = 'flex';
+      if (btnLogin) btnLogin.style.display  = 'none';
+      if (btnSignup) btnSignup.style.display = 'none';
+      if (profileEl) profileEl.style.display = 'flex';
 
       const initial = (session.name || session.email || 'U')[0].toUpperCase();
-      document.getElementById('user-initial').textContent      = initial;
-      document.getElementById('profile-initial-lg').textContent = initial;
-      document.getElementById('profile-name').textContent      = session.name  || 'User';
-      document.getElementById('profile-email').textContent     = session.email || '';
+      const uInit = document.getElementById('user-initial');
+      const pInit = document.getElementById('profile-initial-lg');
+      const pName = document.getElementById('profile-name');
+      const pEmail = document.getElementById('profile-email');
+
+      if (uInit) uInit.textContent = initial;
+      if (pInit) pInit.textContent = initial;
+      if (pName) pName.textContent = session.name  || 'User';
+      if (pEmail) pEmail.textContent = session.email || '';
 
       // ── Fetch fresh user data from Firestore ──
       fetch(
@@ -474,7 +479,7 @@
         window.location.href = 'index.html';
       });
     }
-  })();
+  });
   </script>
 </body>
 </html>

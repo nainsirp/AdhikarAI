@@ -211,7 +211,8 @@ ul { list-style: none; }
   z-index: 2000;
   overflow: hidden;
 }
-.profile-dropdown.open {
+.profile-dropdown.open,
+.profile-dropdown.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);

@@ -354,6 +354,16 @@
         const provider = new firebase.auth.GoogleAuthProvider();
         const result = await _auth.signInWithPopup(provider);
         const user = result.user;
+
+        // Save session to localStorage
+        const idToken = await user.getIdToken();
+        localStorage.setItem('adhikarai_user', JSON.stringify({
+          uid:   user.uid,
+          email: user.email,
+          name:  user.displayName || user.email.split('@')[0],
+          token: idToken
+        }));
+
         try {
           const snap = await _db.collection('users').doc(user.uid).get();
           if (!snap.exists) {

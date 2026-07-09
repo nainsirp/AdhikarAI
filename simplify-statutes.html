@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simplify Legal Statutes – AdhikarAI</title>
+  <meta name="description" content="Convert complex IPC/BNSS legal sections into simple, plain-language summaries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--warm-gray);
+      margin-top: 60px; /* navbar spacing */
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      width: 280px;
+      background: var(--white);
+      border-right: 1.5px solid var(--border);
+      padding: 30px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .sidebar-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
+    .sidebar-item:hover {
+      background: #F9FAFB;
+      color: var(--charcoal);
+    }
+    .sidebar-item.active {
+      background: #FAF3F3;
+      color: var(--crimson);
+      font-weight: 600;
+      border-color: #F5E6E6;
+    }
+
+    /* ── MAIN CONTENT AREA ── */
+    .main-content {
+      flex: 1;
+      padding: 40px 48px 80px;
+      overflow-y: auto;
+    }
+    .tool-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 36px;
+    }
+    .tool-header h1 {
+      font-size: 2.2rem;
+      font-family: var(--font-serif);
+      color: var(--charcoal);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .tool-header p {
+      font-size: 0.95rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+    }
+
+    /* ── SEARCH & ACTION AREA ── */
+    .search-section {
+      max-width: 700px;
+      margin: 0 auto 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .search-bar-container {
+      position: relative;
+      width: 100%;
+    }
+    .search-input {
+      width: 100%;
+      padding: 16px 52px 16px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: var(--font-main);
+      color: var(--charcoal);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: all var(--transition);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--crimson);
+      box-shadow: 0 6px 18px rgba(139, 26, 26, 0.08);
+    }
+    .mic-btn {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--crimson);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    .mic-btn:hover {
+      background: #FDF2F2;
+    }
+    .mic-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-main);
+    }
+    .upload-btn:hover {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: #FAF5F5;
+    }
+    .upload-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    /* ── RESULTS SECTION ── */
+    .results-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .result-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      min-height: 280px;
+    }
+    .result-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--crimson);
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+    .result-content {
+      font-size: 0.88rem;
+      color: #333;
+      line-height: 1.6;
+      flex: 1;
+    }
+    .result-card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .card-btn {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      transition: all var(--transition);
+      color: var(--mid-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font-main);
+    }
+    .card-btn:hover {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: #FAF5F5;
+    }
+    .points-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .points-list li {
+      display: flex;
+      gap: 10px;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #333;
+    }
+    .checkmark-circle {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #FAF2F2;
+      border: 1.2px solid var(--crimson);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--crimson);
+      font-weight: 800;
+      font-size: 0.65rem;
+    }
+
+    /* ── BOTTOM SECTIONS ── */
+    .bottom-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 24px;
+    }
+    .related-card {
+      flex: 1.5;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+    .related-card h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+    }
+    .pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--mid-gray);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-main);
+    }
+    .pill:hover, .pill.active {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: #FAF5F5;
+    }
+    .ask-ai-promo {
+      flex: 1;
+      background: #FAF3F3;
+      border: 1px solid #F5E6E6;
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      text-decoration: none;
+    }
+    .ask-ai-promo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 26, 26, 0.05);
+    }
+    .promo-text h3 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--crimson);
+      margin-bottom: 4px;
+    }
+    .promo-text p {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .promo-arrow {
+      color: var(--crimson);
+      font-size: 1.3rem;
+      font-weight: 700;
+      transition: transform 0.2s;
+    }
+    .ask-ai-promo:hover .promo-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ── MOCK LOADING & FEEDBACK ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2D3748;
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .loading-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.7);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+    }
+    .spinner-small {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #F0F0F0;
+      border-top-color: var(--crimson);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .result-card {
+        min-height: auto;
+      }
+    }
+    @media (max-width: 768px) {
+      .app-layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1.5px solid var(--border);
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 16px;
+      }
+      .sidebar-item {
+        white-space: nowrap;
+        padding: 8px 12px;
+      }
+      .main-content {
+        padding: 24px 16px 60px;
+      }
+      .bottom-layout {
+        flex-direction: column;
+      }
+      .tool-header h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="how-it-works.html" class="nav-link">How it works</a>
+        <a href="features.html" class="nav-link">Features</a>
+      </nav>
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html?v=4" class="btn-login" id="btn-login">Log In</a>
+        <a href="signup.html?v=4" class="btn-signup" id="btn-signup">Sign Up</a>
+
+        <!-- Profile (shown when logged in) -->
+        <div class="user-profile" id="user-profile">
+          <button class="user-avatar-btn" id="user-avatar-btn" aria-label="User profile">
+            <span id="user-initial">U</span>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+              <div class="profile-avatar-lg"><span id="profile-initial-lg">U</span></div>
+              <div class="profile-info">
+                <p class="profile-name" id="profile-name">User</p>
+                <p class="profile-email" id="profile-email">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-divider"></div>
+            <a href="#" class="profile-menu-item" id="menu-my-docs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              My Documents
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-chat-history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat History
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Account Settings
+            </a>
+            <div class="profile-divider"></div>
+            <button class="profile-signout" id="signout-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="index.html#about" class="mobile-link">About</a>
+      <a href="how-it-works.html" class="mobile-link">How it works</a>
+      <a href="features.html" class="mobile-link">Features</a>
+      <a href="login.html" class="mobile-link">Log In</a>
+      <a href="#" class="mobile-link signup-mobile">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN LAYOUT ==================== -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="simplify-statutes.html" class="sidebar-item active">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Simplify Legal Statutes
+      </a>
+      <a href="draft-notices.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Draft Legal Notices
+      </a>
+      <a href="ask-ai.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Ask AI (Instant Rights Help)
+      </a>
+      <a href="procedure-mapper.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        Legal Procedure Mapper
+      </a>
+      <div class="sidebar-item" onclick="showFeatureNotice('Rights Awareness Hub')">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        Rights Awareness Hub
+      </div>
+      <div class="sidebar-item" onclick="showFeatureNotice('Case Timeline Tracker')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Case Timeline Tracker
+      </div>
+      <a href="evidence-vault.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Evidence Vault
+      </a>
+      <div class="sidebar-item" onclick="showFeatureNotice('Voice Legal Assistant')">
+        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+        Voice Legal Assistant
+      </div>
+      <div class="sidebar-item" onclick="showFeatureNotice('Support Directory')">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Support Directory
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main-content">
+      
+      <!-- Top Title Block -->
+      <div class="tool-header">
+        <h1>Simplify Legal Statutes</h1>
+        <p>Convert complex legal jargon into simple, easy-to-understand language.</p>
+      </div>
+
+      <!-- Search Input Container -->
+      <section class="search-section">
+        <div class="search-bar-container">
+          <input type="text" class="search-input" id="search-input" placeholder="Ask about any IPC/BNSS section..." aria-label="Search legal sections" />
+          <button class="mic-btn" id="mic-btn" aria-label="Voice input" onclick="triggerVoiceMock()">
+            <!-- Microphone SVG -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Upload Btn -->
+        <button class="upload-btn" id="upload-btn" onclick="triggerUploadMock()">
+          <!-- Upload SVG -->
+          <svg viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Upload Document
+        </button>
+      </section>
+
+      <!-- Results Grid -->
+      <h2 class="results-heading">Results</h2>
+      <div style="position: relative;">
+        <!-- Loading spinner overlay -->
+        <div class="loading-overlay" id="loading-overlay">
+          <div class="spinner-small"></div>
+        </div>
+
+        <div class="results-grid">
+          
+          <!-- Card 1: Original Section -->
+          <div class="result-card">
+            <h3>Original Section (<span id="res-section-title">IPC 354A</span>)</h3>
+            <div class="result-content" id="res-original-text">
+              Loading original statute text...
+            </div>
+          </div>
+
+          <!-- Card 2: Plain Language Summary -->
+          <div class="result-card">
+            <h3>Plain Language Summary</h3>
+            <div class="result-content" id="res-summary-text">
+              Loading summary...
+            </div>
+            <div class="result-card-actions">
+              <button class="card-btn" onclick="copySummaryText()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+              <button class="card-btn" id="translate-btn" onclick="toggleTranslation()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 5h12M7 2v3M7 5c0 4.42-3.13 8-7 8M4.5 9c1.5 1.5 3.5 3 5.5 3M17 22l2.5-6 2.5 6M18 20h3"/></svg>
+                Translate
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3: Key Points -->
+          <div class="result-card">
+            <h3>Key Points</h3>
+            <div class="result-content">
+              <ul class="points-list" id="res-key-points">
+                <!-- Points go here -->
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Layout Section -->
+      <div class="bottom-layout">
+        
+        <!-- Related Sections -->
+        <div class="related-card">
+          <h3>Related Sections</h3>
+          <div class="pills-container">
+            <button class="pill" id="pill-ipc509" onclick="loadStatute('509')">IPC 509</button>
+            <button class="pill" id="pill-ipc354" onclick="loadStatute('354')">IPC 354</button>
+            <button class="pill" id="pill-ipc376" onclick="loadStatute('376')">IPC 376</button>
+            <button class="pill" id="pill-ipc500" onclick="loadStatute('500')">IPC 500</button>
+          </div>
+        </div>
+
+        <!-- Promo Banner -->
+        <a href="features.html" class="ask-ai-promo">
+          <div class="promo-text">
+            <h3>Still confused?</h3>
+            <p>Talk to AdhikarAI</p>
+          </div>
+          <span class="promo-arrow">→</span>
+        </a>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Feedback message</div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    // ── DATABASE OF MOCK STATUTES ──
+    const STATUTE_DB = {
+      "354A": {
+        title: "IPC 354A",
+        original: {
+          en: "354A. Sexual harassment: A man shall be punishable with imprisonment of either description for a term which may extend to three years, or with fine, or with both, if he— (a) commits sexual harassment; or (b) commits any act of physical contact and advances; or (c) demands or requests sexual favours; or (d) shows pornography.",
+          hi: "354A. यौन उत्पीड़न: एक पुरुष जो किसी भी प्रकार के कारावास से दंडनीय होगा, जिसकी अवधि तीन वर्ष तक हो सकती है, या जुर्माने से, या दोनों से, यदि वह— (a) यौन उत्पीड़न करता है; या (b) शारीरिक संपर्क और प्रगति का कोई कार्य करता है; या (c) यौन संबंधों की मांग या अनुरोध करता है; या (d) अश्लील साहित्य दिखाता है।"
+        },
+        summary: {
+          en: "This law makes it clear that unwanted sexual behavior or advances (physical or verbal) is a punishable offense. It protects you against acts like touching, asking for sexual favors, or showing pornographic content.",
+          hi: "यह कानून स्पष्ट करता है कि अवांछित यौन व्यवहार या शारीरिक/मौखिक रूप से आगे बढ़ना एक दंडनीय अपराध है। यह आपको छूने, यौन संबंध या अनुग्रह मांगने, या अश्लील सामग्री दिखाने जैसे कृत्यों से बचाता है।"
+        },
+        points: {
+          en: [
+            "Protects against unwanted sexual behavior",
+            "Includes physical touch or advances",
+            "Demands or requests for sexual favors",
+            "Showing pornography",
+            "Punishable with up to 3 years in prison or fine"
+          ],
+          hi: [
+            "अवांछित यौन व्यवहार से सुरक्षा",
+            "शारीरिक स्पर्श या अनुग्रह शामिल है",
+            "यौन संबंध या अनुग्रह की मांग",
+            "अश्लीलता दिखाना या प्रदर्शित करना",
+            "3 साल तक की जेल या जुर्माने से दंडनीय"
+          ]
+        }
+      },
+      "509": {
+        title: "IPC 509",
+        original: {
+          en: "509. Word, gesture or act intended to insult the modesty of a woman: Whoever, intending to insult the modesty of any woman, utters any word, makes any sound or gesture, or exhibits any object, intending that such word or sound shall be heard, or that such gesture or object shall be seen, by such woman, or intrudes upon the privacy of such woman, shall be punished with simple imprisonment for a term which may extend to three years, and also with fine.",
+          hi: "509. शब्द, इशारा या कार्य जो किसी महिला की लज्जा का अनादर करने के लिए प्रेरित हो: जो कोई भी, किसी महिला की लज्जा का अनादर करने के इरादे से, कोई शब्द बोलता है, कोई आवाज या इशारा करता है, या कोई वस्तु प्रदर्शित करता है, इस इरादे से कि ऐसा शब्द या आवाज सुनी जाए, या ऐसा इशारा या वस्तु देखी जाए, या ऐसी महिला की निजता में घुसपैठ करता है, उसे साधारण कारावास से दंडित किया जाएगा, जिसकी अवधि तीन वर्ष तक हो सकती है, और जुर्माने से भी।"
+        },
+        summary: {
+          en: "This law protects women from verbal abuse, gestures, sounds, or displaying objects meant to insult their modesty. It also covers serious intrusions into a woman's privacy, such as stalking or harassment.",
+          hi: "यह कानून महिलाओं को उनके शील का अपमान करने के उद्देश्य से की जाने वाली अभद्र भाषा, इशारों, आवाजों या वस्तुओं को प्रदर्शित करने से बचाता है। इसमें महिला की निजता में गंभीर घुसपैठ (जैसे पीछा करना या उत्पीड़न) भी शामिल है।"
+        },
+        points: {
+          en: [
+            "Insulting modesty via words, sounds, or gestures",
+            "Exhibiting inappropriate objects in public",
+            "Intruding upon a woman's private space",
+            "Simple imprisonment up to 3 years",
+            "Mandatory fine in addition to prison"
+          ],
+          hi: [
+            "शब्दों, आवाजों या इशारों से शील का अपमान",
+            "सार्वजनिक रूप से अनुपयुक्त वस्तुएं प्रदर्शित करना",
+            "महिला के निजी स्थान में दखल देना",
+            "3 साल तक की साधारण कैद",
+            "कैद के अलावा अनिवार्य जुर्माना"
+          ]
+        }
+      },
+      "354": {
+        title: "IPC 354",
+        original: {
+          en: "354. Assault or criminal force to woman with intent to outrage her modesty: Whoever assaults or uses criminal force to any woman, intending to outrage or knowing it to be likely that he will thereby outrage her modesty, shall be punished with imprisonment of either description for a term which shall not be less than one year but which may extend to five years, and shall also be liable to fine.",
+          hi: "354. महिला की लज्जा भंग करने के इरादे से उस पर हमला या आपराधिक बल प्रयोग: जो कोई भी किसी महिला पर हमला करता है या आपराधिक बल का प्रयोग करता है, उसकी लज्जा भंग करने के इरादे से या यह जानते हुए कि इससे उसकी लज्जा भंग होने की संभावना है, उसे किसी भी अवधि के कारावास से दंडित किया जाएगा जो एक वर्ष से कम नहीं होगा लेकिन जो पांच वर्ष तक बढ़ सकता है, और जुर्माने के लिए भी उत्तरदायी होगा।"
+        },
+        summary: {
+          en: "This section criminalizes any physical assault or use of force against a woman with the specific intent or knowledge that it will outrage her modesty. It is a non-bailable offense with severe penalties.",
+          hi: "यह धारा किसी भी महिला के खिलाफ शारीरिक हमले या बल प्रयोग को अपराध मानती है, जिसका उद्देश्य या जानकारी उसके शील को भंग करना हो। यह एक गैर-जमानती अपराध है जिसमें गंभीर सजा का प्रावधान है।"
+        },
+        points: {
+          en: [
+            "Criminal force or physical assault",
+            "Intent to outrage or violate modesty",
+            "Non-bailable and cognizable offense",
+            "Imprisonment of 1 to 5 years",
+            "Subject to court-mandated fines"
+          ],
+          hi: [
+            "आपराधिक बल या शारीरिक हमला",
+            "शील भंग करने या उल्लंघन करने का इरादा",
+            "गैर-जमानती और संज्ञेय अपराध",
+            "1 से 5 वर्ष तक का कारावास",
+            "अदालत द्वारा लगाए जाने वाले जुर्माने के अधीन"
+          ]
+        }
+      },
+      "376": {
+        title: "IPC 376",
+        original: {
+          en: "376. Punishment for sexual assault / rape: Whoever commits rape shall be punished with rigorous imprisonment of either description for a term which shall not be less than ten years, but which may extend to imprisonment for life, and shall also be liable to fine.",
+          hi: "376. यौन उत्पीड़न / बलात्कार के लिए दंड: जो कोई भी बलात्कार करता है, उसे किसी भी विवरण के कठोर कारावास से दंडित किया जाएगा, जिसकी अवधि दस वर्ष से कम नहीं होगी, लेकिन जिसे आजीवन कारावास तक बढ़ाया जा सकता है, और जुर्माने के लिए भी उत्तरदायी होगा।"
+        },
+        summary: {
+          en: "This law prescribes strict, long-term imprisonment for sexual assault. The minimum sentence is 10 years and can extend to life imprisonment depending on the severity of the crime.",
+          hi: "यह कानून यौन हमले के लिए सख्त, दीर्घकालिक कारावास का प्रावधान करता है। न्यूनतम सजा 10 वर्ष है और अपराध की गंभीरता के आधार पर इसे आजीवन कारावास तक बढ़ाया जा सकता है।"
+        },
+        points: {
+          en: [
+            "Rigorous prosecution of sexual assault",
+            "Minimum punishment of 10 years",
+            "Can extend to life imprisonment",
+            "Applicable to aggravated cases",
+            "Includes strong financial fines"
+          ],
+          hi: [
+            "यौन हमले का सख्त अभियोजन",
+            "न्यूनतम 10 वर्ष की सजा",
+            "आजीवन कारावास तक बढ़ाया जा सकता है",
+            "गंभीर मामलों पर लागू",
+            "मजबूत वित्तीय जुर्माना शामिल है"
+          ]
+        }
+      },
+      "500": {
+        title: "IPC 500",
+        original: {
+          en: "500. Punishment for defamation: Whoever defames another shall be punished with simple imprisonment for a term which may extend to two years, or with fine, or with both.",
+          hi: "500. मानहानि के लिए दंड: जो कोई भी दूसरे की मानहानि करेगा, उसे साधारण कारावास से दंडित किया जाएगा, जिसकी अवधि दो वर्ष तक हो सकती है, या जुर्माने से, या दोनों से।"
+        },
+        summary: {
+          en: "This section covers defamation, which is the act of damaging someone's reputation through false statements (spoken or written). It is punishable by simple jail time or a fine.",
+          hi: "यह धारा मानहानि को कवर करती है, जो झूठे बयानों (मौखिक या लिखित) के माध्यम से किसी की प्रतिष्ठा को नुकसान पहुंचाने का कृत्य है। यह साधारण जेल की सजा या जुर्माने से दंडनीय है।"
+        },
+        points: {
+          en: [
+            "Damaging a reputation with false claims",
+            "Applies to both spoken and written words",
+            "Simple imprisonment up to 2 years",
+            "Punishable with fines or both",
+            "Requires proof of malicious intent"
+          ],
+          hi: [
+            "झूठे दावों से प्रतिष्ठा को नुकसान पहुंचाना",
+            "बोले गए और लिखे गए दोनों शब्दों पर लागू होता है",
+            "2 साल तक की साधारण कैद",
+            "जुर्माने या दोनों से दंडनीय",
+            "दुर्भावनापूर्ण इरादे के प्रमाण की आवश्यकता"
+          ]
+        }
+      }
+    };
+
+    let currentStatuteId = "354A";
+    let currentLang = "en";
+
+    // ── INITIAL LOAD ──
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStatute("354A");
+
+      // Enter key search support
+      const searchInput = document.getElementById('search-input');
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          handleSearch(searchInput.value.trim());
+        }
+      });
+      
+      // Auto-profile dropdown sync if logged in
+      const session = JSON.parse(localStorage.getItem('adhikarai_user') || 'null');
+      if (session && session.uid) {
+        document.getElementById('btn-login').style.display = 'none';
+        document.getElementById('btn-signup').style.display = 'none';
+        const userProfile = document.getElementById('user-profile');
+        if (userProfile) {
+          userProfile.style.display = 'block';
+          const init = (session.name || session.email || 'U')[0].toUpperCase();
+          document.getElementById('user-initial').textContent = init;
+          document.getElementById('profile-initial-lg').textContent = init;
+          document.getElementById('profile-name').textContent = session.name || 'User';
+          document.getElementById('profile-email').textContent = session.email || '';
+        }
+      }
+
+      // Dropdown toggle
+      const avatarBtn = document.getElementById('user-avatar-btn');
+      const dropdown = document.getElementById('profile-dropdown');
+      if (avatarBtn && dropdown) {
+        avatarBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+      }
+
+      // Sign out
+      const signoutBtn = document.getElementById('signout-btn');
+      if (signoutBtn) {
+        signoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('adhikarai_user');
+          window.location.href = 'index.html';
+        });
+      }
+    });
+
+    // ── FUNCTIONALITY ──
+    function loadStatute(id) {
+      const statuteId = id.toUpperCase().replace(/\s/g, '');
+      const key = statuteId.startsWith("IPC") ? statuteId.replace("IPC", "") : statuteId;
+      
+      if (!STATUTE_DB[key]) {
+        showToast("Statute not found in database. Try searching '354', '509', '376', or '500'.");
+        return;
+      }
+
+      const overlay = document.getElementById('loading-overlay');
+      overlay.style.display = 'flex';
+
+      setTimeout(() => {
+        currentStatuteId = key;
+        const data = STATUTE_DB[key];
+        
+        // Update elements
+        document.getElementById('res-section-title').textContent = data.title;
+        document.getElementById('res-original-text').textContent = data.original[currentLang];
+        document.getElementById('res-summary-text').textContent = data.summary[currentLang];
+
+        const listEl = document.getElementById('res-key-points');
+        listEl.innerHTML = data.points[currentLang].map(pt => `
+          <li>
+            <div class="checkmark-circle">✓</div>
+            <span>${pt}</span>
+          </li>
+        `).join('');
+
+        // Sync Related Section Pills highlight
+        document.querySelectorAll('.pill').forEach(el => el.classList.remove('active'));
+        const activePill = document.getElementById(`pill-ipc${key.toLowerCase()}`);
+        if (activePill) activePill.classList.add('active');
+
+        overlay.style.display = 'none';
+      }, 300);
+    }
+
+    function handleSearch(query) {
+      if (!query) return;
+      const cleanQuery = query.toUpperCase().replace(/[^0-9A-Z]/g, '');
+      let found = false;
+
+      for (const key of Object.keys(STATUTE_DB)) {
+        if (cleanQuery.includes(key) || key.includes(cleanQuery)) {
+          loadStatute(key);
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        showToast(`Could not find summary for "${query}". Displaying related categories.`);
+      }
+    }
+
+    function toggleTranslation() {
+      currentLang = currentLang === "en" ? "hi" : "en";
+      const data = STATUTE_DB[currentStatuteId];
+      
+      // Update contents
+      document.getElementById('res-original-text').textContent = data.original[currentLang];
+      document.getElementById('res-summary-text').textContent = data.summary[currentLang];
+      const listEl = document.getElementById('res-key-points');
+      listEl.innerHTML = data.points[currentLang].map(pt => `
+        <li>
+          <div class="checkmark-circle">✓</div>
+          <span>${pt}</span>
+        </li>
+      `).join('');
+
+      document.getElementById('translate-btn').innerHTML = currentLang === "en" 
+        ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 5h12M7 2v3M7 5c0 4.42-3.13 8-7 8M4.5 9c1.5 1.5 3.5 3 5.5 3M17 22l2.5-6 2.5 6M18 20h3"/></svg> Translate`
+        : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 5h12M7 2v3M7 5c0 4.42-3.13 8-7 8M4.5 9c1.5 1.5 3.5 3 5.5 3M17 22l2.5-6 2.5 6M18 20h3"/></svg> Translate`;
+
+      showToast(`Language switched to ${currentLang === 'en' ? 'English' : 'Hindi'}`);
+    }
+
+    function copySummaryText() {
+      const summaryText = document.getElementById('res-summary-text').textContent;
+      navigator.clipboard.writeText(summaryText)
+        .then(() => showToast("Copied Plain Language Summary to Clipboard!"))
+        .catch(() => showToast("Failed to copy. Please select and copy manually."));
+    }
+
+    function triggerVoiceMock() {
+      showToast("🎙️ Listening for section number or legal terms... Speak now.");
+      const input = document.getElementById('search-input');
+      input.placeholder = "Listening...";
+      
+      setTimeout(() => {
+        input.placeholder = "Ask about any IPC/BNSS section...";
+        input.value = "IPC 509";
+        showToast("Search filled with recognized text: 'IPC 509'");
+        loadStatute("509");
+      }, 2500);
+    }
+
+    function triggerUploadMock() {
+      showToast("📂 Open file dialog (Mock)... Please select an IPC document.");
+      const overlay = document.getElementById('loading-overlay');
+      overlay.style.display = 'flex';
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        loadStatute("376");
+        showToast("📄 File 'incident_report.pdf' uploaded and analyzed successfully. Showing IPC 376.");
+      }, 2000);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function showFeatureNotice(name) {
+      showToast(`✨ "${name}" tool is securely locked. Fully active in the production portal.`);
+    }
+  </script>
+</body>
+</html>

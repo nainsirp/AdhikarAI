@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Procedure Mapper – AdhikarAI</title>
+  <meta name="description" content="Visual, step-by-step guides for filing an FIR, submitting POSH complaints, and seeking legal protection in India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      min-height: 100vh;
+      background: var(--warm-gray);
+      margin-top: 60px; /* navbar spacing */
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      background: var(--white);
+      border-right: 1.5px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 60px);
+    }
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-section h4 {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--mid-gray);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .nav-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+    .sidebar-item svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+    .sidebar-item:hover {
+      background: #F9FAFB;
+      color: var(--charcoal);
+    }
+    .sidebar-item.active {
+      background: #FAF3F3;
+      color: var(--crimson);
+      font-weight: 600;
+    }
+
+    /* ── MIDDLE PANEL: PROCEDURE CONTENT ── */
+    .content-panel {
+      padding: 32px 40px 64px;
+      overflow-y: auto;
+      max-height: calc(100vh - 60px);
+    }
+    .mapper-header {
+      margin-bottom: 28px;
+    }
+    .mapper-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+    }
+    .mapper-subtitle {
+      font-size: 0.9rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+    }
+
+    /* DROPDOWN SELECTOR */
+    .select-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.01);
+      margin-bottom: 32px;
+    }
+    .select-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .select-dropdown {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-family: var(--font-main);
+      color: var(--charcoal);
+      outline: none;
+      background: var(--white);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+      padding-right: 48px;
+      transition: border-color 0.2s;
+    }
+    .select-dropdown:focus {
+      border-color: var(--crimson);
+    }
+
+    /* GRID LAYOUT FOR PROCESS DETS */
+    .process-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* LEFT: PROCESS OVERVIEW */
+    .overview-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .overview-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--crimson);
+      margin-bottom: -4px;
+    }
+    .overview-text {
+      font-size: 0.85rem;
+      color: var(--charcoal);
+      line-height: 1.5;
+    }
+    .stat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 1.5px solid var(--border);
+      padding-top: 16px;
+    }
+    .stat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .stat-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--mid-gray);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .stat-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+    .stat-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--mid-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-val {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+    .download-checklist-btn {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--crimson);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background var(--transition);
+      font-family: var(--font-main);
+      margin-top: 8px;
+    }
+    .download-checklist-btn:hover {
+      background: var(--crimson-dk);
+    }
+    .download-checklist-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    /* RIGHT: STEP-BY-STEP PROCESS TIMELINE */
+    .timeline-col {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.01);
+    }
+    .timeline-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--crimson);
+      margin-bottom: 20px;
+    }
+    .timeline-path {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      padding-left: 20px;
+    }
+    .timeline-path::before {
+      content: "";
+      position: absolute;
+      left: 31px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: #F3E1E1;
+      z-index: 1;
+    }
+    .timeline-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 16px;
+      z-index: 2;
+    }
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--crimson);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+      box-shadow: 0 0 0 2px var(--crimson);
+    }
+    .step-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .step-heading {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+    }
+
+    /* BOTTOM STILL CONFUSED CARD */
+    .confused-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: var(--charcoal);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .confused-card:hover {
+      border-color: var(--crimson);
+      transform: translateY(-2px);
+    }
+    .confused-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .confused-lbl {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--crimson);
+    }
+    .confused-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .confused-arrow {
+      color: var(--crimson);
+      display: flex;
+      align-items: center;
+    }
+    .confused-arrow svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    /* ── RIGHT PANEL: DOCUMENTS & WIDGETS ── */
+    .widgets-panel {
+      background: var(--white);
+      border-left: 1.5px solid var(--border);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 60px);
+    }
+    .widget-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.01);
+    }
+    .widget-card h3 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    /* DOCUMENTS LIST */
+    .docs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .doc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .doc-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--crimson);
+      background: #FAF3F3;
+      border: 1.5px solid #F5D6D6;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .doc-icon svg {
+      width: 11px;
+      height: 11px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+    .doc-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      line-height: 1.4;
+    }
+    .doc-sub {
+      font-size: 0.72rem;
+      color: var(--mid-gray);
+      margin-top: 1px;
+    }
+
+    /* NEED HELP */
+    .help-card {
+      background: #FAF9F9;
+      border: 1.5px dashed var(--border);
+    }
+    .help-card h3 {
+      border: none;
+      padding: 0;
+      margin-bottom: 8px;
+    }
+    .help-desc {
+      font-size: 0.78rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .get-help-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--white);
+      border: 1.5px solid var(--crimson);
+      color: var(--crimson);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .get-help-btn:hover {
+      background: var(--crimson);
+      color: var(--white);
+    }
+
+    /* ── MODALS & TOASTS ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .modal-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+    }
+    .modal-close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mid-gray);
+    }
+    .modal-close:hover {
+      color: var(--crimson);
+    }
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .form-group input, .form-group select {
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: var(--font-main);
+      color: var(--charcoal);
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: var(--crimson);
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn-modal-cancel {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-submit {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background: var(--crimson);
+      color: var(--white);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-submit:hover {
+      background: var(--crimson-dk);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2D3748;
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 3000;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 240px 1fr;
+      }
+      .widgets-panel {
+        display: none;
+      }
+    }
+    @media (max-width: 768px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="how-it-works.html" class="nav-link">How it works</a>
+        <a href="features.html" class="nav-link">Features</a>
+      </nav>
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html?v=4" class="btn-login" id="btn-login">Log In</a>
+        <a href="signup.html?v=4" class="btn-signup" id="btn-signup">Sign Up</a>
+
+        <!-- Profile (shown when logged in) -->
+        <div class="user-profile" id="user-profile">
+          <button class="user-avatar-btn" id="user-avatar-btn" aria-label="User profile">
+            <span id="user-initial">U</span>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+              <div class="profile-avatar-lg"><span id="profile-initial-lg">U</span></div>
+              <div class="profile-info">
+                <p class="profile-name" id="profile-name">User</p>
+                <p class="profile-email" id="profile-email">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-divider"></div>
+            <a href="#" class="profile-menu-item" id="menu-my-docs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              My Documents
+            </a>
+            <a href="ask-ai.html" class="profile-menu-item" id="menu-chat-history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat History
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Account Settings
+            </a>
+            <div class="profile-divider"></div>
+            <button class="profile-signout" id="signout-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="index.html#about" class="mobile-link">About</a>
+      <a href="how-it-works.html" class="mobile-link">How it works</a>
+      <a href="features.html" class="mobile-link">Features</a>
+      <a href="login.html" class="mobile-link">Log In</a>
+      <a href="#" class="mobile-link signup-mobile">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- ==================== APP LAYOUT ==================== -->
+  <div class="app-layout">
+    
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      
+      <div class="sidebar-section">
+        <h4>Tools & Services</h4>
+        <div class="nav-links-list">
+          <a href="simplify-statutes.html" class="sidebar-item">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Simplify Statutes
+          </a>
+          <a href="draft-notices.html" class="sidebar-item">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Draft Legal Notices
+          </a>
+          <a href="ask-ai.html" class="sidebar-item">
+            <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Ask AI (Instant Rights)
+          </a>
+          <a href="procedure-mapper.html" class="sidebar-item active">
+            <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+            Legal Procedure Mapper
+          </a>
+          <a href="evidence-vault.html" class="sidebar-item">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Evidence Vault
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Middle Panel: Main Interactive Mapper Content -->
+    <main class="content-panel">
+      
+      <!-- Heading -->
+      <div class="mapper-header">
+        <h1 class="mapper-title">Legal Procedure Mapper</h1>
+        <p class="mapper-subtitle">Understand legal processes step-by-step with visual guidance.</p>
+      </div>
+
+      <!-- Selector Card -->
+      <div class="select-card">
+        <label for="procedure-select" class="select-label">Choose a Legal Process</label>
+        <select id="procedure-select" class="select-dropdown" onchange="switchProcedure()">
+          <option value="fir">File an FIR</option>
+          <option value="posh">File a POSH Workplace Harassment Complaint</option>
+          <option value="dv_order">Seek a Domestic Violence Protection Order</option>
+          <option value="maintenance">Claim Child Support / Maintenance (Section 125 CrPC)</option>
+        </select>
+      </div>
+
+      <!-- Process Layout Grid -->
+      <div class="process-grid">
+        
+        <!-- Left: Overview Stats -->
+        <div class="overview-col">
+          <h3 class="overview-title">Process Overview</h3>
+          <p class="overview-text" id="proc-desc">An FIR is the first step to inform the police about a cognizable offence.</p>
+          
+          <div class="stat-list">
+            <div class="stat-item">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Estimated Time</span>
+                <span class="stat-val" id="proc-time">1-2 hours</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><path d="M5.5 21a8.5 8.5 0 0 1 13 0"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Cost</span>
+                <span class="stat-val" id="proc-cost">Free</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+              </div>
+              <div class="stat-details">
+                <span class="stat-label">Authority</span>
+                <span class="stat-val" id="proc-authority">Police Station</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="download-checklist-btn" onclick="downloadChecklist()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Checklist
+          </button>
+        </div>
+
+        <!-- Right: Step-by-step timeline -->
+        <div class="timeline-col">
+          <h3 class="timeline-title">Step-by-step Process</h3>
+          <div class="timeline-path" id="timeline-path">
+            <!-- Dynamic steps list -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Card redirecting to Ask AI -->
+      <a href="ask-ai.html" class="confused-card">
+        <div class="confused-info">
+          <span class="confused-lbl">Still confused?</span>
+          <span class="confused-title">Talk to AdhikarAI</span>
+        </div>
+        <div class="confused-arrow">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </a>
+
+    </main>
+
+    <!-- Right Widgets Panel -->
+    <aside class="widgets-panel">
+      
+      <!-- Documents list -->
+      <div class="widget-card">
+        <h3>Documents You May Need</h3>
+        <div class="docs-list" id="docs-list">
+          <!-- Dynamic documents checklist -->
+        </div>
+      </div>
+
+      <!-- Need Help -->
+      <div class="widget-card help-card">
+        <h3>Need Help?</h3>
+        <p class="help-desc">Talk to AdhikarAI or connect with a pro-bono lawyer for immediate assistance.</p>
+        <button class="get-help-btn" onclick="openLawyerModal()">Get Help</button>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ==================== CONNECT TO PRO-BONO LAWYER MODAL ==================== -->
+  <div class="modal-overlay" id="lawyer-modal">
+    <div class="modal-card" id="lawyer-modal-content">
+      <button class="modal-close" onclick="closeLawyerModal()">✕</button>
+      <h3>Connect with Pro-Bono Lawyer</h3>
+      <p style="font-size: 0.82rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 16px;">
+        Provide your details and we will match you with a verified legal advocate in your city for a free confidential consultation.
+      </p>
+      <div class="form-group">
+        <label for="user-full-name">Full Name</label>
+        <input type="text" id="user-full-name" placeholder="Enter your full name" required />
+      </div>
+      <div class="form-group">
+        <label for="user-phone">Phone Number</label>
+        <input type="tel" id="user-phone" placeholder="+91 98765 43210" required />
+      </div>
+      <div class="form-group">
+        <label for="user-city-dropdown">Your City</label>
+        <select id="user-city-dropdown">
+          <option value="New Delhi">New Delhi</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Kolkata">Kolkata</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeLawyerModal()">Cancel</button>
+        <button class="btn-modal-submit" onclick="submitLawyerConnect()">Connect Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Feedback message</div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    let session = null;
+
+    // ── DATA FOR LEGAL PROCEDURES ──
+    const PROCEDURES_DB = {
+      "fir": {
+        description: "An FIR (First Information Report) is the first step to inform the police about a cognizable offence in India.",
+        time: "1-2 hours",
+        cost: "Free",
+        authority: "Police Station",
+        steps: [
+          {
+            title: "Visit Nearest Police Station",
+            desc: "Go to the nearest police station within whose jurisdiction the offence occurred. If unsafe or far, visit any station to file a 'Zero FIR'."
+          },
+          {
+            title: "Lodge Your Complaint",
+            desc: "Provide details of the incident to the officer in writing or orally. If oral, the officer must write it down and read it back to you."
+          },
+          {
+            title: "FIR is Registered",
+            desc: "The officer will record the details in the official FIR register. You must sign the complaint. The police are legally bound to give you a copy for free."
+          },
+          {
+            title: "Investigation Begins",
+            desc: "The police will initiate an investigation, visit the site, gather evidence, and may contact you for further clarifications."
+          }
+        ],
+        docs: [
+          { title: "Identity Proof", sub: "Aadhaar Card, Voter ID, or Passport" },
+          { title: "Address Proof (if any)", sub: "Helpful for official jurisdiction updates" },
+          { title: "Details of Incident", sub: "Note down date, time, location, and description of suspects" },
+          { title: "Any Evidence", sub: "Photos, text messages, videos, or call records" }
+        ]
+      },
+      "posh": {
+        description: "Workplace sexual harassment complaints are processed under the POSH Act, 2013 by the Internal Complaints Committee (ICC).",
+        time: "30-90 days",
+        cost: "Free",
+        authority: "Internal Complaints Committee (ICC)",
+        steps: [
+          {
+            title: "Draft Written Complaint",
+            desc: "Prepare a detailed written complaint containing dates, times, locations, and descriptions of the harassment. Include any witness names."
+          },
+          {
+            title: "Submit to ICC",
+            desc: "Submit 6 copies of the complaint along with supporting documents to your organization's ICC within 3 months of the incident."
+          },
+          {
+            title: "Inquiry & Conciliation",
+            desc: "The ICC may first offer conciliation (not monetary). If declined, they will initiate a formal inquiry, summoning both parties."
+          },
+          {
+            title: "Inquiry Report & Action",
+            desc: "The ICC must complete the inquiry in 90 days and submit the report to the employer, who has 60 days to implement recommended actions."
+          }
+        ],
+        docs: [
+          { title: "Written Complaint (6 copies)", sub: "Clearly detailing the chronological events" },
+          { title: "Supporting Evidence", sub: "Emails, Slack/Teams chats, call logs, or voice notes" },
+          { title: "List of Witnesses", sub: "Name and contact details of colleagues who can corroborate" },
+          { title: "Employee ID Proof", sub: "To verify your active employment status" }
+        ]
+      },
+      "dv_order": {
+        description: "Under the Domestic Violence Act, 2005, victims can seek immediate protection, residence, and maintenance orders from court.",
+        time: "3-7 days (Interim)",
+        cost: "Free (via Legal Aid)",
+        authority: "Magistrate Court / Protection Officer",
+        steps: [
+          {
+            title: "Contact Protection Officer",
+            desc: "Reach out to a Protection Officer in your district or visit a local service provider to fill a Domestic Incident Report (DIR)."
+          },
+          {
+            title: "Filing in Magistrate Court",
+            desc: "The Protection Officer or a legal aid advocate will file the DIR and application in the local Magistrate Court."
+          },
+          {
+            title: "Interim Relief Hearing",
+            desc: "The Magistrate hears the case and can pass immediate interim protection orders ex-parte (without waiting for the husband) to stop abuse."
+          },
+          {
+            title: "Final Judgment Order",
+            desc: "The court summons the husband. After hearing both sides, the judge passes final orders regarding safety, residence, and maintenance."
+          }
+        ],
+        docs: [
+          { title: "Domestic Incident Report (DIR)", sub: "Form filled with Protection Officer" },
+          { title: "Marriage Certificate / Proof", sub: "Photos, wedding cards, or joint accounts" },
+          { title: "Evidence of Violence", sub: "Medical/hospital reports, photographs of injuries" },
+          { title: "Income Proof", sub: "To support requests for financial maintenance" }
+        ]
+      },
+      "maintenance": {
+        description: "Section 125 of the CrPC (now Section 144 of the BNSS) enables wives and children to claim monthly maintenance from husbands.",
+        time: "3-6 months",
+        cost: "Free via State Legal Aid",
+        authority: "Family Court",
+        steps: [
+          {
+            title: "File Section 125 Petition",
+            desc: "Draft and file a petition in the local Family Court detailing the marriage, abandonment, and your lack of income."
+          },
+          {
+            title: "Summons Sent to Husband",
+            desc: "The court issues a formal summons to the husband to appear and file his reply regarding his assets and income."
+          },
+          {
+            title: "Interim Maintenance Order",
+            desc: "During the pending trial, the court can order the husband to pay immediate monthly support to cover your survival expenses."
+          },
+          {
+            title: "Trial and Final Award",
+            desc: "Both parties submit income affidavits. The judge evaluates the husband's lifestyle and issues a final decree on monthly maintenance."
+          }
+        ],
+        docs: [
+          { title: "Marriage Proof", sub: "Certificate, wedding photos, or invitation card" },
+          { title: "Daughter/Son Birth Certs", sub: "If claiming child support maintenance" },
+          { title: "Income Affidavits", sub: "Details of your assets and proof of husband's income/salary" },
+          { title: "Legal Aid Application (if any)", sub: "To obtain free state legal representation" }
+        ]
+      }
+    };
+
+    // ── DOM CONTENT LOADED ──
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sync login/signup session
+      try { session = JSON.parse(localStorage.getItem('adhikarai_user') || 'null'); } catch(e) {}
+      if (session && session.uid) {
+        document.getElementById('btn-login').style.display = 'none';
+        document.getElementById('btn-signup').style.display = 'none';
+        const userProfile = document.getElementById('user-profile');
+        if (userProfile) {
+          userProfile.style.display = 'block';
+          const init = (session.name || session.email || 'U')[0].toUpperCase();
+          document.getElementById('user-initial').textContent = init;
+          document.getElementById('profile-initial-lg').textContent = init;
+          document.getElementById('profile-name').textContent = session.name || 'User';
+          document.getElementById('profile-email').textContent = session.email || '';
+        }
+      }
+
+      // Dropdown toggle
+      const avatarBtn = document.getElementById('user-avatar-btn');
+      const dropdown = document.getElementById('profile-dropdown');
+      if (avatarBtn && dropdown) {
+        avatarBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+      }
+
+      // Sign out
+      const signoutBtn = document.getElementById('signout-btn');
+      if (signoutBtn) {
+        signoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('adhikarai_user');
+          window.location.href = 'index.html';
+        });
+      }
+
+      // Initial procedure load
+      switchProcedure();
+    });
+
+    // ── SWITCH PROCEDURE LOGIC ──
+    function switchProcedure() {
+      const select = document.getElementById('procedure-select');
+      const val = select.value;
+      const data = PROCEDURES_DB[val];
+
+      if (!data) return;
+
+      // Update overview details
+      document.getElementById('proc-desc').textContent = data.description;
+      document.getElementById('proc-time').textContent = data.time;
+      document.getElementById('proc-cost').textContent = data.cost;
+      document.getElementById('proc-authority').textContent = data.authority;
+
+      // Update step-by-step timeline
+      const timeline = document.getElementById('timeline-path');
+      timeline.innerHTML = data.steps.map((s, i) => `
+        <div class="timeline-step">
+          <div class="step-number">${i + 1}</div>
+          <div class="step-info">
+            <span class="step-heading">${s.title}</span>
+            <p class="step-desc">${s.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Update documents checklist
+      const docList = document.getElementById('docs-list');
+      docList.innerHTML = data.docs.map(d => `
+        <div class="doc-item">
+          <div class="doc-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="doc-details">
+            <span class="doc-title">${d.title}</span>
+            <p class="doc-sub">${d.sub}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── CHECKLIST DOWNLOADER ──
+    function downloadChecklist() {
+      const select = document.getElementById('procedure-select');
+      const val = select.value;
+      const data = PROCEDURES_DB[val];
+      const label = select.options[select.selectedIndex].text;
+
+      if (!data) return;
+
+      let content = `==================================================\n`;
+      content += `   ADHIKARAI - LEGAL PROCEDURE CHECKLIST\n`;
+      content += `==================================================\n\n`;
+      content += `Legal Process: ${label}\n`;
+      content += `Description: ${data.description}\n`;
+      content += `Authority: ${data.authority}\n`;
+      content += `Estimated Time: ${data.time}\n`;
+      content += `Cost: ${data.cost}\n\n`;
+
+      content += `--------------------------------------------------\n`;
+      content += `1. REQUIRED DOCUMENTS CHECKLIST\n`;
+      content += `--------------------------------------------------\n`;
+      data.docs.forEach((d, i) => {
+        content += `[ ] ${i + 1}. ${d.title} (${d.sub})\n`;
+      });
+      content += `\n`;
+
+      content += `--------------------------------------------------\n`;
+      content += `2. STEP-BY-STEP WORKFLOW\n`;
+      content += `--------------------------------------------------\n`;
+      data.steps.forEach((s, i) => {
+        content += `Step ${i + 1}: ${s.title}\n`;
+        content += `  -> ${s.desc}\n\n`;
+      });
+
+      content += `==================================================\n`;
+      content += `Disclaimer: This checklist is for informational purposes\n`;
+      content += `and does not constitute direct legal advice. Consult an advocate.\n`;
+      content += `==================================================\n`;
+
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${val}_checklist.txt`;
+      link.click();
+      showToast(`💾 Checklist downloaded for ${label}`);
+    }
+
+    // ── PRO-BONO LAWYER MODAL FLOW ──
+    function openLawyerModal() {
+      document.getElementById('lawyer-modal').style.display = 'flex';
+    }
+    function closeLawyerModal() {
+      document.getElementById('lawyer-modal').style.display = 'none';
+    }
+    function submitLawyerConnect() {
+      const name = document.getElementById('user-full-name').value.trim();
+      const phone = document.getElementById('user-phone').value.trim();
+      const city = document.getElementById('user-city-dropdown').value;
+
+      if (!name || !phone) {
+        showToast("Please fill in both Name and Phone fields.");
+        return;
+      }
+
+      const modalContent = document.getElementById('lawyer-modal-content');
+      modalContent.innerHTML = `
+        <div style="text-align: center; padding: 40px 0;">
+          <div class="spinner" style="margin: 0 auto 16px;"></div>
+          <p style="font-size: 0.88rem; font-weight:600; color: var(--crimson);">Matching you with a pro-bono lawyer in ${city}...</p>
+        </div>
+      `;
+
+      setTimeout(() => {
+        modalContent.innerHTML = `
+          <div class="success-icon-wrap" style="text-align: center; padding: 20px 0;">
+            <div class="success-ring" style="width:50px; height:50px; border-radius:50%; background:#FAF2F2; border:2px solid var(--crimson); display:flex; align-items:center; justify-content:center; color:var(--crimson); font-size:1.4rem; font-weight:bold; margin: 0 auto 16px;">✓</div>
+            <h3>Legal Match Confirmed!</h3>
+            <p style="font-size: 0.82rem; color: var(--mid-gray); line-height:1.5; margin-bottom: 16px;">
+              Advocate Sneha Sharma in ${city} has been assigned to your query. They will review your case details and contact you on <strong>${phone}</strong> within 2 hours.
+            </p>
+            <button class="btn-modal-submit" onclick="closeLawyerModal()" style="margin-top: 10px;">Done</button>
+          </div>
+        `;
+        showToast(`Matched with Sneha Sharma in ${city}!`);
+        restoreLawyerModalHTML();
+      }, 2500);
+    }
+    function restoreLawyerModalHTML() {
+      setTimeout(() => {
+        document.getElementById('lawyer-modal').innerHTML = `
+          <div class="modal-card" id="lawyer-modal-content">
+            <button class="modal-close" onclick="closeLawyerModal()">✕</button>
+            <h3>Connect with Pro-Bono Lawyer</h3>
+            <p style="font-size: 0.82rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 16px;">
+              Provide your details and we will match you with a verified legal advocate in your city for a free confidential consultation.
+            </p>
+            <div class="form-group">
+              <label for="user-full-name">Full Name</label>
+              <input type="text" id="user-full-name" placeholder="Enter your full name" required />
+            </div>
+            <div class="form-group">
+              <label for="user-phone">Phone Number</label>
+              <input type="tel" id="user-phone" placeholder="+91 98765 43210" required />
+            </div>
+            <div class="form-group">
+              <label for="user-city-dropdown">Your City</label>
+              <select id="user-city-dropdown">
+                <option value="New Delhi">New Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button class="btn-modal-cancel" onclick="closeLawyerModal()">Cancel</button>
+              <button class="btn-modal-submit" onclick="submitLawyerConnect()">Connect Now</button>
+            </div>
+          </div>
+        `;
+      }, 1000);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

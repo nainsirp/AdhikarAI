@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How It Works – AdhikarAI</title>
+  <meta name="description" content="Learn how AdhikarAI makes legal support accessible and simple. Follow our four-step journey to legal guidance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── PROCESS PAGE SPECIFIC STYLES ── */
+    .how-it-works-section {
+      padding: 120px 0 80px;
+      background: var(--white);
+    }
+    .steps-header {
+      max-width: 650px;
+      margin: 0 auto 70px;
+      text-align: center;
+    }
+    .steps-header h1 {
+      font-family: var(--font-serif);
+      font-size: 2.6rem;
+      color: var(--crimson);
+      margin-bottom: 18px;
+      font-weight: 700;
+    }
+    .steps-header p {
+      font-size: 1.05rem;
+      color: var(--mid-gray);
+      line-height: 1.6;
+    }
+    .steps-container {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    .steps-connecting-line {
+      position: absolute;
+      top: 116px;
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      border-top: 2px dashed #E2E8F0;
+      z-index: 1;
+    }
+    .step-card {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--crimson);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      box-shadow: 0 3px 8px rgba(139,26,26,0.25);
+    }
+    .step-icon-circle {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1.5px solid #F0F0F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .step-card:hover .step-icon-circle {
+      transform: translateY(-4px);
+      border-color: var(--crimson);
+      box-shadow: 0 8px 24px rgba(139,26,26,0.1);
+    }
+    .step-icon-circle svg {
+      width: 44px;
+      height: 44px;
+      stroke: var(--crimson);
+      fill: none;
+      stroke-width: 1.6;
+    }
+    .step-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 12px;
+    }
+    .step-card p {
+      font-size: 0.85rem;
+      color: var(--mid-gray);
+      line-height: 1.6;
+      max-width: 230px;
+    }
+    .safety-banner {
+      max-width: 850px;
+      margin: 80px auto 0;
+      background: #FAF6F6;
+      border: 1px solid #F4E8E8;
+      border-radius: 12px;
+      padding: 22px 30px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      text-align: left;
+    }
+    .safety-icon {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #F3E5E5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .safety-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--crimson);
+      fill: none;
+      stroke-width: 2;
+    }
+    .safety-text {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.55;
+    }
+    .safety-text strong {
+      color: var(--crimson);
+      font-weight: 700;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .how-it-works-section {
+        padding: 100px 0 60px;
+      }
+      .steps-header {
+        margin-bottom: 50px;
+      }
+      .steps-header h1 {
+        font-size: 2.2rem;
+      }
+      .steps-container {
+        flex-direction: column;
+        gap: 48px;
+        align-items: center;
+        padding: 0;
+      }
+      .steps-connecting-line {
+        top: 0;
+        left: 50%;
+        bottom: 0;
+        width: 2px;
+        height: auto;
+        border-left: 2px dashed #E2E8F0;
+        border-top: none;
+        transform: translateX(-50%);
+        z-index: 1;
+      }
+      .step-card {
+        max-width: 300px;
+      }
+      .step-badge {
+        margin-bottom: 16px;
+      }
+      .step-icon-circle {
+        margin-bottom: 16px;
+      }
+      .safety-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 14px;
+        padding: 24px;
+        margin-top: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="how-it-works.html" class="nav-link active">How it works</a>
+        <a href="features.html" class="nav-link">Features</a>
+      </nav>
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html?v=4" class="btn-login" id="btn-login">Log In</a>
+        <a href="signup.html?v=4" class="btn-signup" id="btn-signup">Sign Up</a>
+
+        <!-- Profile (shown when logged in) -->
+        <div class="user-profile" id="user-profile">
+          <button class="user-avatar-btn" id="user-avatar-btn" aria-label="User profile">
+            <span id="user-initial">U</span>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+              <div class="profile-avatar-lg"><span id="profile-initial-lg">U</span></div>
+              <div class="profile-info">
+                <p class="profile-name" id="profile-name">User</p>
+                <p class="profile-email" id="profile-email">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-divider"></div>
+            <a href="#" class="profile-menu-item" id="menu-my-docs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              My Documents
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-chat-history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat History
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Account Settings
+            </a>
+            <div class="profile-divider"></div>
+            <button class="profile-signout" id="signout-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="index.html#about" class="mobile-link">About</a>
+      <a href="how-it-works.html" class="mobile-link">How it works</a>
+      <a href="features.html" class="mobile-link">Features</a>
+      <a href="login.html" class="mobile-link">Log In</a>
+      <a href="#" class="mobile-link signup-mobile">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- ==================== HOW IT WORKS CONTENT ==================== -->
+  <main class="how-it-works-section">
+    <div class="container">
+      
+      <!-- Header -->
+      <div class="steps-header" data-animate="fade-up">
+        <h1>How It Works</h1>
+        <p>AdhikarAI makes legal support accessible and simple. Here's how we help you every step of the way.</p>
+      </div>
+
+      <!-- Process Steps Grid -->
+      <div class="steps-container">
+        <!-- Connecting Line behind circles -->
+        <div class="steps-connecting-line"></div>
+
+        <!-- Step 1 -->
+        <div class="step-card" data-animate="fade-up" style="transition-delay: 0.1s;">
+          <div class="step-badge">1</div>
+          <div class="step-icon-circle">
+            <!-- Document icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3>Tell Us Your Problem</h3>
+          <p>Share your legal issue in simple words in your local language through our easy-to-use platform.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card" data-animate="fade-up" style="transition-delay: 0.2s;">
+          <div class="step-badge">2</div>
+          <div class="step-icon-circle">
+            <!-- Woman silhouette outline icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8.5" r="4"/>
+              <path d="M6 19.5c0-3.5 2.7-5.5 6-5.5s6 2 6 5.5"/>
+              <path d="M8 8.5c0-2.2 1.8-4 4-4s4 1.8 4 4"/>
+            </svg>
+          </div>
+          <h3>Get AI Guidance</h3>
+          <p>Our AI analyzes your issue and provides step-by-step guidance, legal information, and possible solutions.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card" data-animate="fade-up" style="transition-delay: 0.3s;">
+          <div class="step-badge">3</div>
+          <div class="step-icon-circle">
+            <!-- Open door icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/>
+              <path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/>
+              <path d="M15 5l4-1v18h-4"/>
+              <circle cx="10" cy="13" r="1"/>
+            </svg>
+          </div>
+          <h3>Connect with a Lawyer</h3>
+          <p>If needed, get matched with a verified pro-bono lawyer specializing in your type of case.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card" data-animate="fade-up" style="transition-delay: 0.4s;">
+          <div class="step-badge">4</div>
+          <div class="step-icon-circle">
+            <!-- Heart icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <h3>Get the Support You Deserve</h3>
+          <p>Receive the legal help and support you need to move forward with confidence.</p>
+        </div>
+      </div>
+
+      <!-- Safety Banner -->
+      <div class="safety-banner" data-animate="fade-up" style="transition-delay: 0.5s;">
+        <div class="safety-icon">
+          <!-- Shield check icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 11 11 13 15 9"/>
+          </svg>
+        </div>
+        <div class="safety-text">
+          <strong>Safe. Private. Trustworthy.</strong><br/>
+          Your information is secure and confidential. We're here to empower you with justice.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Company Info</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Carrier</a></li>
+            <li><a href="#">We are hiring</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Features</h4>
+          <ul>
+            <li><a href="features.html">Rights Awareness Hub</a></li>
+            <li><a href="features.html">Evidence Vault</a></li>
+            <li><a href="features.html">AI Legal Advisor</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="#">support@adhikarai.in</a></li>
+            <li><a href="#">NGO Partnership</a></li>
+            <li><a href="#">Lawyer Sign Up</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-left">
+          <p>© 2026 AdhikarAI. All rights reserved.</p>
+        </div>
+        <div class="footer-socials">
+          <a href="#" class="social-link" aria-label="Twitter">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    // Local script to toggle profile dropdown and signout (similar to index.html logic)
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = JSON.parse(localStorage.getItem('adhikarai_user') || 'null');
+      const userProfile = document.getElementById('user-profile');
+      const btnLogin = document.getElementById('btn-login');
+      const btnSignup = document.getElementById('btn-signup');
+
+      if (session && session.uid) {
+        if (btnLogin) btnLogin.style.display = 'none';
+        if (btnSignup) btnSignup.style.display = 'none';
+        if (userProfile) {
+          userProfile.style.display = 'block';
+          const init = (session.name || session.email || 'U')[0].toUpperCase();
+          document.getElementById('user-initial').textContent = init;
+          document.getElementById('profile-initial-lg').textContent = init;
+          document.getElementById('profile-name').textContent = session.name || 'User';
+          document.getElementById('profile-email').textContent = session.email || '';
+        }
+      }
+
+      // Dropdown toggle
+      const avatarBtn = document.getElementById('user-avatar-btn');
+      const dropdown = document.getElementById('profile-dropdown');
+      if (avatarBtn && dropdown) {
+        avatarBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+      }
+
+      // Sign out
+      const signoutBtn = document.getElementById('signout-btn');
+      if (signoutBtn) {
+        signoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('adhikarai_user');
+          window.location.href = 'index.html';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

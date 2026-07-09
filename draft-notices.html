@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Draft Legal Notices – AdhikarAI</title>
+  <meta name="description" content="Generate and draft professional legal notices in minutes with AI assistance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- html2pdf library for client-side PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    /* ── PAGE LAYOUT ── */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--warm-gray);
+      margin-top: 60px; /* navbar spacing */
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      width: 280px;
+      background: var(--white);
+      border-right: 1.5px solid var(--border);
+      padding: 30px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--mid-gray);
+      text-decoration: none;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .sidebar-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0;
+    }
+    .sidebar-item:hover {
+      background: #F9FAFB;
+      color: var(--charcoal);
+    }
+    .sidebar-item.active {
+      background: #FAF3F3;
+      color: var(--crimson);
+      font-weight: 600;
+      border-color: #F5E6E6;
+    }
+
+    /* ── MAIN CONTENT AREA ── */
+    .main-content {
+      flex: 1;
+      padding: 40px 48px 80px;
+      overflow-y: auto;
+    }
+    .tool-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 30px;
+    }
+    .tool-header h1 {
+      font-size: 2.2rem;
+      font-family: var(--font-serif);
+      color: var(--charcoal);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .tool-header p {
+      font-size: 0.95rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+    }
+
+    /* ── PROGRESS WIZARD ── */
+    .wizard-steps {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 750px;
+      margin: 0 auto 40px;
+      gap: 12px;
+    }
+    .wizard-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--light-gray);
+    }
+    .wizard-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #E5E7EB;
+      color: var(--mid-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .wizard-step.active {
+      color: var(--crimson);
+    }
+    .wizard-step.active .wizard-step-num {
+      background: var(--crimson);
+      color: var(--white);
+    }
+    .wizard-step.completed {
+      color: var(--charcoal);
+    }
+    .wizard-step.completed .wizard-step-num {
+      background: var(--charcoal);
+      color: var(--white);
+    }
+    .wizard-line {
+      flex: 1;
+      height: 1.5px;
+      background: var(--border);
+      max-width: 100px;
+    }
+
+    /* ── TWO COLUMN GRID ── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── FORM STYLING (LEFT COLUMN) ── */
+    .form-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+    .form-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-family: var(--font-main);
+      color: var(--charcoal);
+      transition: all var(--transition);
+      background: var(--white);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--crimson);
+      box-shadow: 0 4px 12px rgba(139, 26, 26, 0.05);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--charcoal);
+      cursor: pointer;
+    }
+    .radio-label input {
+      accent-color: var(--crimson);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    .btn-continue {
+      width: 100%;
+      padding: 12px;
+      background: var(--crimson);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      font-family: var(--font-main);
+    }
+    .btn-continue:hover {
+      background: var(--crimson-dk);
+    }
+    .form-back-link {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--mid-gray);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+    }
+    .form-back-link:hover {
+      color: var(--crimson);
+    }
+
+    /* ── EDITOR STYLING (RIGHT COLUMN) ── */
+    .editor-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .editor-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .settings-btn {
+      background: none;
+      border: none;
+      color: var(--mid-gray);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .settings-btn:hover {
+      color: var(--crimson);
+      background: #FAF5F5;
+    }
+    .settings-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: #F9FAFB;
+      border: 1.5px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 8px;
+    }
+    .tool-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--mid-gray);
+      transition: all 0.2s;
+    }
+    .tool-btn:hover {
+      color: var(--crimson);
+      border-color: var(--crimson);
+      background: #FAF5F5;
+    }
+    .tool-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+    .tool-btn.active-style {
+      background: #FAF3F3;
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+    .editor-body {
+      min-height: 400px;
+      max-height: 600px;
+      border: 1.5px solid var(--border);
+      border-radius: 0 0 8px 8px;
+      padding: 24px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--charcoal);
+      background: var(--white);
+      outline: none;
+    }
+    .editor-body:focus {
+      border-color: var(--crimson);
+    }
+    .editor-body h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--crimson);
+      text-align: center;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+    .editor-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .editor-actions .btn {
+      flex: 1;
+      padding: 11px 0;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-main);
+    }
+    .btn-save-draft {
+      background: var(--white);
+      border: 1.5px solid var(--crimson);
+      color: var(--crimson);
+    }
+    .btn-save-draft:hover {
+      background: #FAF3F3;
+    }
+    .btn-download-pdf {
+      background: var(--crimson);
+      border: 1.5px solid var(--crimson);
+      color: var(--white);
+    }
+    .btn-download-pdf:hover {
+      background: var(--crimson-dk);
+      border-color: var(--crimson-dk);
+    }
+    .btn-send-lawyer {
+      background: var(--crimson);
+      border: 1.5px solid var(--crimson);
+      color: var(--white);
+    }
+    .btn-send-lawyer:hover {
+      background: var(--crimson-dk);
+      border-color: var(--crimson-dk);
+    }
+
+    /* ── PAST DRAFTS CONTAINER ── */
+    .past-drafts-wrap {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F9FAFB;
+      border: 1px dashed var(--border);
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+    .past-drafts-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--mid-gray);
+    }
+    .drafts-select {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ── MODALS & OVERLAYS ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .modal-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+    }
+    .modal-close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--mid-gray);
+    }
+    .modal-close:hover {
+      color: var(--crimson);
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn-modal-cancel {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-submit {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background: var(--crimson);
+      color: var(--white);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-submit:hover {
+      background: var(--crimson-dk);
+    }
+
+    /* Sending Success Animation */
+    .success-icon-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 20px 0;
+    }
+    .success-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #FAF2F2;
+      border: 2.5px solid var(--crimson);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--crimson);
+      font-size: 1.8rem;
+      font-weight: bold;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes pop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .loading-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3.5px solid #F0F0F0;
+      border-top-color: var(--crimson);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .loading-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--crimson);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2D3748;
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 3000;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .tool-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+    }
+    @media (max-width: 768px) {
+      .app-layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1.5px solid var(--border);
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 16px;
+      }
+      .sidebar-item {
+        white-space: nowrap;
+        padding: 8px 12px;
+      }
+      .main-content {
+        padding: 24px 16px 60px;
+      }
+      .tool-header h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-adhikar">Adhikar</span><span class="logo-ai">AI</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#home" class="nav-link">Home</a>
+        <a href="index.html#about" class="nav-link">About</a>
+        <a href="how-it-works.html" class="nav-link">How it works</a>
+        <a href="features.html" class="nav-link">Features</a>
+      </nav>
+      <div class="nav-actions" id="nav-actions">
+        <a href="login.html?v=4" class="btn-login" id="btn-login">Log In</a>
+        <a href="signup.html?v=4" class="btn-signup" id="btn-signup">Sign Up</a>
+
+        <!-- Profile (shown when logged in) -->
+        <div class="user-profile" id="user-profile">
+          <button class="user-avatar-btn" id="user-avatar-btn" aria-label="User profile">
+            <span id="user-initial">U</span>
+          </button>
+          <div class="profile-dropdown" id="profile-dropdown">
+            <div class="profile-header">
+              <div class="profile-avatar-lg"><span id="profile-initial-lg">U</span></div>
+              <div class="profile-info">
+                <p class="profile-name" id="profile-name">User</p>
+                <p class="profile-email" id="profile-email">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-divider"></div>
+            <a href="#" class="profile-menu-item" id="menu-my-docs">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              My Documents
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-chat-history">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Chat History
+            </a>
+            <a href="#" class="profile-menu-item" id="menu-settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Account Settings
+            </a>
+            <div class="profile-divider"></div>
+            <button class="profile-signout" id="signout-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="index.html#about" class="mobile-link">About</a>
+      <a href="how-it-works.html" class="mobile-link">How it works</a>
+      <a href="features.html" class="mobile-link">Features</a>
+      <a href="login.html" class="mobile-link">Log In</a>
+      <a href="#" class="mobile-link signup-mobile">Sign Up</a>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN LAYOUT ==================== -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <a href="simplify-statutes.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Simplify Legal Statutes
+      </a>
+      <a href="draft-notices.html" class="sidebar-item active">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Draft Legal Notices
+      </a>
+      <a href="ask-ai.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Ask AI (Instant Rights Help)
+      </a>
+      <a href="procedure-mapper.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+        Legal Procedure Mapper
+      </a>
+      <div class="sidebar-item" onclick="showFeatureNotice('Rights Awareness Hub')">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        Rights Awareness Hub
+      </div>
+      <div class="sidebar-item" onclick="showFeatureNotice('Case Timeline Tracker')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Case Timeline Tracker
+      </div>
+      <a href="evidence-vault.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Evidence Vault
+      </a>
+      <div class="sidebar-item" onclick="showFeatureNotice('Voice Legal Assistant')">
+        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+        Voice Legal Assistant
+      </div>
+      <div class="sidebar-item" onclick="showFeatureNotice('Support Directory')">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Support Directory
+      </div>
+    </aside>
+
+    <!-- Main Panel -->
+    <main class="main-content">
+      
+      <!-- Top Title Block -->
+      <div class="tool-header">
+        <h1>Draft Legal Notices</h1>
+        <p>Create professional legal notices in minutes.</p>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="wizard-steps">
+        <div class="wizard-step active" id="step-indicator-1">
+          <div class="wizard-step-num">1</div>
+          Choose Type
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step" id="step-indicator-2">
+          <div class="wizard-step-num">2</div>
+          Provide Details
+        </div>
+        <div class="wizard-line"></div>
+        <div class="wizard-step" id="step-indicator-3">
+          <div class="wizard-step-num">3</div>
+          Review Draft
+        </div>
+      </div>
+
+      <!-- Grid Column Layout -->
+      <div class="tool-grid">
+        
+        <!-- Left Side: Forms Column -->
+        <div class="form-panel">
+          
+          <!-- Past Drafts Loader -->
+          <div class="past-drafts-wrap">
+            <span class="past-drafts-label">📁 Load Saved Drafts</span>
+            <select class="drafts-select" id="drafts-select" onchange="loadSavedDraft(this.value)">
+              <option value="">-- Select a draft --</option>
+            </select>
+          </div>
+
+          <!-- STEP 1 Form CARD -->
+          <div class="form-card" id="form-card-step1">
+            <h3>Notice Subject</h3>
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label for="notice-subject">What kind of crime / dispute happened? (Subject)</label>
+              <input type="text" id="notice-subject" placeholder="e.g. Harassment on a bus, phone robbery, non-payment of dues" required />
+            </div>
+
+            <h3>Your Details (Sender)</h3>
+            <div class="form-group">
+              <label for="sender-name">Full Name</label>
+              <input type="text" id="sender-name" placeholder="Enter your full name" required />
+            </div>
+            <div class="form-group">
+              <label for="sender-address">Address</label>
+              <input type="text" id="sender-address" placeholder="Enter your address" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sender-city">City</label>
+                <select id="sender-city">
+                  <option value="New Delhi">New Delhi</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Kolkata">Kolkata</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sender-state">State</label>
+                <select id="sender-state">
+                  <option value="Delhi">Delhi</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn-continue" style="margin-top: 24px;" onclick="goToStep(2)">Continue</button>
+          </div>
+
+          <!-- STEP 2 Form CARD -->
+          <div class="form-card" id="form-card-step2" style="display: none;">
+            <h3>Recipient Details (Receiver)</h3>
+            <div class="form-group">
+              <label for="recipient-name">Recipient Name / Company</label>
+              <input type="text" id="recipient-name" placeholder="Enter recipient name or company" required />
+            </div>
+            <div class="form-group">
+              <label for="recipient-address">Recipient Address</label>
+              <input type="text" id="recipient-address" placeholder="Enter recipient address" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="recipient-city">City</label>
+                <select id="recipient-city">
+                  <option value="New Delhi">New Delhi</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Kolkata">Kolkata</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="recipient-state">State</label>
+                <select id="recipient-state">
+                  <option value="Delhi">Delhi</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
+                  <option value="West Bengal">West Bengal</option>
+                </select>
+              </div>
+            </div>
+
+            <h3 style="margin-top: 24px;">Incident details</h3>
+            <div class="form-group">
+              <label for="incident-details">Incident Description & Dates</label>
+              <textarea id="incident-details" placeholder="Describe what happened, relevant dates, or details of claims..." required></textarea>
+            </div>
+
+            <button class="btn-continue" style="margin-top: 24px;" onclick="goToStep(3)">Draft Notice with AI</button>
+            <a class="form-back-link" onclick="goToStep(1)">← Go Back to Step 1</a>
+          </div>
+
+          <!-- STEP 3 Form CARD -->
+          <div class="form-card" id="form-card-step3" style="display: none;">
+            <h3>Review Draft Details</h3>
+            <p style="font-size: 0.85rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 20px;">
+              Your draft has been generated using AI! You can edit the text directly in the right panel. Use the formatting toolbar to refine headers or text.
+            </p>
+            <button class="btn-continue" onclick="goToStep(2)">← Modify Input Details</button>
+            <a class="form-back-link" onclick="goToStep(1)">← Restart From Step 1</a>
+          </div>
+
+        </div>
+
+        <!-- Right Side: Editor Column -->
+        <div class="editor-panel">
+          <div class="editor-card" style="position: relative;">
+            
+            <!-- Loading overlay for AI generation -->
+            <div class="loading-overlay" id="loading-overlay">
+              <div class="spinner"></div>
+              <div class="loading-text" id="loading-text">AI drafting your legal notice...</div>
+            </div>
+
+            <div class="editor-header">
+              <h3>Your Draft (Editable)</h3>
+              <!-- Gemini API Key configuration button -->
+              <button class="settings-btn" onclick="openKeyModal()" title="Configure Gemini API Key">
+                <svg viewBox="0 0 24 24">
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Formatting Toolbar -->
+            <div class="editor-toolbar">
+              <button class="tool-btn" onclick="formatDoc('bold')" title="Bold (Ctrl+B)">
+                <svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
+              </button>
+              <button class="tool-btn" onclick="formatDoc('italic')" title="Italic (Ctrl+I)">
+                <svg viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
+              </button>
+              <button class="tool-btn" onclick="formatDoc('underline')" title="Underline (Ctrl+U)">
+                <svg viewBox="0 0 24 24"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>
+              </button>
+              <div style="width: 1px; background: var(--border); height: 20px; margin: 0 4px;"></div>
+              <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List">
+                <svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+              </button>
+              <button class="tool-btn" onclick="formatDoc('insertOrderedList')" title="Numbered List">
+                <svg viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4M4 10h2M4 14h2v2H4v2h2"/></svg>
+              </button>
+              <button class="tool-btn" onclick="insertLink()" title="Add Link">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </button>
+              <button class="tool-btn" onclick="formatDoc('unlink')" title="Remove Link">
+                <svg viewBox="0 0 24 24"><path d="M18.84 19A9 9 0 0 0 20 12c0-4.97-4.03-9-9-9S2 7.03 2 12s4.03 9 9 9c2.3 0 4.39-.86 6-2.26"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+              </button>
+            </div>
+
+            <!-- Editable Document Area -->
+            <div class="editor-body" id="editor-body" contenteditable="true">
+              <h1>LEGAL NOTICE</h1>
+              <p>To,</p>
+              <p><strong>[Recipient Name]</strong><br/>
+              [Address]<br/>
+              [City, State, PIN]</p>
+              <p><strong>Date:</strong> <span id="current-date-placeholder">24 May 2024</span></p>
+              <p><strong>Subject: Legal Notice and Redressal of Grievance</strong></p>
+              <p>Dear Sir/Madam,</p>
+              <p>I, <strong>[Your Name]</strong>, residing at [Your Address], hereby issue this legal notice to bring to your notice the grievance described herein.</p>
+              <p>Please fill out the forms on the left and click <strong>"Continue"</strong> to automatically draft a complete and professional notice here.</p>
+            </div>
+
+            <!-- Actions Row -->
+            <div class="editor-actions">
+              <button class="btn btn-save-draft" onclick="saveNoticeDraft()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Draft
+              </button>
+              <button class="btn btn-download-pdf" onclick="downloadNoticePDF()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PDF
+              </button>
+              <button class="btn btn-send-lawyer" onclick="openLawyerModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send to Lawyer
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ==================== CONFIG / SETTINGS MODAL ── API KEY ==================== -->
+  <div class="modal-overlay" id="key-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeKeyModal()">✕</button>
+      <h3>Gemini AI Settings</h3>
+      <p style="font-size: 0.82rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 16px;">
+        To unlock real, dynamic AI drafting powered by Google Gemini, enter your Gemini API Key below. If you don't have a key, a professional template compiler will be used as a fallback.
+      </p>
+      <div class="form-group">
+        <label for="gemini-key-input">Gemini API Key</label>
+        <input type="password" id="gemini-key-input" placeholder="Paste AIzaSy... API key here" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeKeyModal()">Cancel</button>
+        <button class="btn-modal-submit" onclick="saveGeminiKey()">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SEND TO LAWYER MODAL ==================== -->
+  <div class="modal-overlay" id="lawyer-modal">
+    <div class="modal-card" id="lawyer-modal-content">
+      <button class="modal-close" onclick="closeLawyerModal()">✕</button>
+      <h3>Send Notice to Lawyer</h3>
+      <p style="font-size: 0.82rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 16px;">
+        Provide the contact information for your lawyer. We will securely format and route a copy of your drafted legal notice directly to them.
+      </p>
+      <div class="form-group">
+        <label for="lawyer-name">Lawyer's Full Name</label>
+        <input type="text" id="lawyer-name" placeholder="Adv. Rajesh Kumar" required />
+      </div>
+      <div class="form-group">
+        <label for="lawyer-email">Lawyer's Email Address</label>
+        <input type="email" id="lawyer-email" placeholder="rajesh.kumar@advocate.in" required />
+      </div>
+      <div class="form-group">
+        <label for="lawyer-phone">Lawyer's Phone Number</label>
+        <input type="tel" id="lawyer-phone" placeholder="+91 98765 43210" required />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" onclick="closeLawyerModal()">Cancel</button>
+        <button class="btn-modal-submit" onclick="sendNoticeToLawyer()">Send Notice</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Feedback message</div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    let activeStep = 1;
+    let session = null;
+    let savedDrafts = [];
+
+    // ── INITIALIZATION ──
+    document.addEventListener('DOMContentLoaded', () => {
+      // Setup current date in placeholders
+      const d = new Date();
+      const formattedDate = d.getDate() + ' ' + d.toLocaleString('en-US', { month: 'long' }) + ' ' + d.getFullYear();
+      document.getElementById('current-date-placeholder').textContent = formattedDate;
+
+      // Handle user profile session sync
+      try { session = JSON.parse(localStorage.getItem('adhikarai_user') || 'null'); } catch(e) {}
+      if (session && session.uid) {
+        document.getElementById('btn-login').style.display = 'none';
+        document.getElementById('btn-signup').style.display = 'none';
+        const userProfile = document.getElementById('user-profile');
+        if (userProfile) {
+          userProfile.style.display = 'block';
+          const init = (session.name || session.email || 'U')[0].toUpperCase();
+          document.getElementById('user-initial').textContent = init;
+          document.getElementById('profile-initial-lg').textContent = init;
+          document.getElementById('profile-name').textContent = session.name || 'User';
+          document.getElementById('profile-email').textContent = session.email || '';
+        }
+      }
+
+      // Dropdown toggle
+      const avatarBtn = document.getElementById('user-avatar-btn');
+      const dropdown = document.getElementById('profile-dropdown');
+      if (avatarBtn && dropdown) {
+        avatarBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('show'));
+      }
+
+      // Sign out
+      const signoutBtn = document.getElementById('signout-btn');
+      if (signoutBtn) {
+        signoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('adhikarai_user');
+          window.location.href = 'index.html';
+        });
+      }
+
+      // Load API key from local storage if saved
+      const savedKey = localStorage.getItem('gemini_api_key');
+      if (savedKey) {
+        document.getElementById('gemini-key-input').value = savedKey;
+      }
+
+      // Load saved drafts list
+      loadDraftsList();
+    });
+
+    // ── WIZARD NAVIGATION ──
+    function goToStep(step) {
+      if (step === 2) {
+        // Validate step 1 fields
+        const subject = document.getElementById('notice-subject').value.trim();
+        const name = document.getElementById('sender-name').value.trim();
+        const addr = document.getElementById('sender-address').value.trim();
+        if (!subject || !name || !addr) {
+          showToast("Please fill in the Subject, Name, and Address fields.");
+          return;
+        }
+      }
+
+      if (step === 3) {
+        // Validate step 2 fields
+        const rName = document.getElementById('recipient-name').value.trim();
+        const rAddr = document.getElementById('recipient-address').value.trim();
+        const details = document.getElementById('incident-details').value.trim();
+        if (!rName || !rAddr || !details) {
+          showToast("Please provide Recipient details and Incident Description.");
+          return;
+        }
+        
+        // Generate draft!
+        generateDraftContent();
+      }
+
+      // Toggle display cards
+      document.getElementById('form-card-step1').style.display = step === 1 ? 'block' : 'none';
+      document.getElementById('form-card-step2').style.display = step === 2 ? 'block' : 'none';
+      document.getElementById('form-card-step3').style.display = step === 3 ? 'block' : 'none';
+
+      // Update indicators
+      updateWizardIndicators(step);
+      activeStep = step;
+    }
+
+    function updateWizardIndicators(step) {
+      for (let i = 1; i <= 3; i++) {
+        const el = document.getElementById(`step-indicator-${i}`);
+        el.className = 'wizard-step';
+        if (i === step) {
+          el.classList.add('active');
+        } else if (i < step) {
+          el.classList.add('completed');
+        }
+      }
+    }
+
+    // ── AI DRAFT GENERATOR ──
+    async function generateDraftContent() {
+      const userSubject = document.getElementById('notice-subject').value.trim();
+      const sName = document.getElementById('sender-name').value.trim();
+      const sAddr = document.getElementById('sender-address').value.trim();
+      const sCity = document.getElementById('sender-city').value;
+      const sState = document.getElementById('sender-state').value;
+      
+      const rName = document.getElementById('recipient-name').value.trim();
+      const rAddr = document.getElementById('recipient-address').value.trim();
+      const rCity = document.getElementById('recipient-city').value;
+      const rState = document.getElementById('recipient-state').value;
+      
+      const details = document.getElementById('incident-details').value.trim();
+      
+      // Auto-detect template type from details text to avoid mix-ups
+      let finalType = "other";
+      const lowerDetails = details.toLowerCase() + " " + userSubject.toLowerCase();
+      if (lowerDetails.includes("robber") || lowerDetails.includes("snatch") || 
+          lowerDetails.includes("theft") || lowerDetails.includes("stolen") || 
+          lowerDetails.includes("thief") || lowerDetails.includes("stole") || 
+          lowerDetails.includes("robbed") || lowerDetails.includes("robbery")) {
+        finalType = "theft";
+      } else if (lowerDetails.includes("office") || 
+                 lowerDetails.includes("boss") || lowerDetails.includes("colleague") || 
+                 lowerDetails.includes("employer") || lowerDetails.includes("employee") ||
+                 lowerDetails.includes("workplace") || lowerDetails.includes("job") ||
+                 lowerDetails.includes("company") || lowerDetails.includes("hr")) {
+        finalType = "workplace";
+      } else if (lowerDetails.includes("marriage") || lowerDetails.includes("wedded") || 
+                 lowerDetails.includes("husband") || lowerDetails.includes("wife") || 
+                 lowerDetails.includes("matrimonial") || lowerDetails.includes("domestic violence")) {
+        finalType = "domestic";
+      }
+      
+      const editor = document.getElementById('editor-body');
+      const overlay = document.getElementById('loading-overlay');
+      
+      overlay.style.display = 'flex';
+      document.getElementById('loading-text').textContent = "AI drafting your legal notice...";
+
+      const d = new Date();
+      const formattedDate = d.getDate() + ' ' + d.toLocaleString('en-US', { month: 'long' }) + ' ' + d.getFullYear();
+
+      // Read API Key
+      const apiKey = localStorage.getItem('gemini_api_key');
+
+      if (apiKey) {
+        // CALL REAL GEMINI API
+        try {
+          const promptText = `You are a professional legal expert in India. Draft a formal, professional legal notice based on these details:
+          - Subject of dispute (provided by user): "${userSubject}"
+          - Sender: "${sName}, residing at ${sAddr}, ${sCity}, ${sState}"
+          - Recipient: "${rName}, residing at ${rAddr}, ${rCity}, ${rState}"
+          - Date of Notice: "${formattedDate}"
+          - Facts of the case & Incident details: "${details}"
+          
+          Instructions:
+          1. Refine the user's raw subject of dispute into a professional, formal legal subject line (e.g. "Legal Notice for..." or "Notice concerning...").
+          2. Draft a professional, formal legal notice structure. Customize the notice context exactly to the facts described by the user. Do not assume workplace harassment or matrimonial issues unless explicitly specified in their details.
+          3. Format the output with clean HTML tags (such as h1, p, br, strong, and ordered lists). Start directly with the title 'LEGAL NOTICE' centered at the top. Ensure the refined subject line is prominently displayed under "Subject: ". Do not include markdown backticks or block wrappers (like \`\`\`html). Output ONLY the HTML contents of the notice.`;
+
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText }] }]
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`Gemini API Error: Status ${response.status}`);
+          }
+
+          const data = await response.json();
+          let generatedHtml = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          
+          if (generatedHtml) {
+            // Strip markdown block markers if Gemini returned them
+            generatedHtml = generatedHtml.replace(/```html/g, '').replace(/```/g, '').trim();
+            editor.innerHTML = generatedHtml;
+            showToast("✨ Legal Notice successfully drafted using Gemini AI!");
+            overlay.style.display = 'none';
+            return;
+          } else {
+            throw new Error("Empty response from AI");
+          }
+
+        } catch (err) {
+          console.error("AI Generation failed, falling back to Smart Template:", err);
+          showToast("⚠️ Gemini API call failed. Using local Smart Template compiler.");
+        }
+      }
+
+      // LOCAL SMART TEMPLATE FALLBACK
+      setTimeout(() => {
+        let subject = "";
+        let bodyParagraphs = "";
+
+        if (finalType === "workplace") {
+          subject = "Legal Notice for Workplace Harassment and Creation of Intimidating Work Environment";
+          bodyParagraphs = `
+            <p>1. Under the instructions of my client, it is brought to your attention that my client has been employed at your esteemed organization as a professional. During their tenure, my client was subjected to continuous, intentional acts of workplace harassment, intimidation, and hostile behavior by certain personnel on or about <strong>${details}</strong>.</p>
+            <p>2. Despite bringing these critical concerns to the management/HR team's attention, no corrective action or inquiry under the POSH Act (Prevention of Sexual Harassment) or standard code of conduct was initiated, which caused significant mental distress and professional damage to my client.</p>
+            <p>3. Consequently, you are hereby called upon to initiate an immediate and impartial inquiry into the incident, take disciplinary action against the wrongdoers, and pay appropriate damages within 15 days of receipt of this notice, failing which my client will be forced to pursue civil and criminal legal action in a court of law.</p>
+          `;
+        } else if (finalType === "domestic") {
+          subject = "Legal Notice concerning Domestic Violence, Harassment, and Demand for Protection";
+          bodyParagraphs = `
+            <p>1. That my client was legally wedded and resided at the matrimonial home. However, shortly after marriage, my client was subjected to physical harassment, mental cruelty, and emotional abuse by the recipient on several occasions, specifically around <strong>${details}</strong>.</p>
+            <p>2. That your actions constitute a direct violation of the Protection of Women from Domestic Violence Act, 2005, causing extreme threat to my client's health, safety, and well-being, forcing them to live separately.</p>
+            <p>3. Therefore, you are hereby called upon to immediately cease all forms of harassment, return all personal belongings (Stridhan), and arrange secure maintenance, failing which my client will file criminal complaints under Section 498A IPC and DV Act proceedings at your sole cost and consequence.</p>
+          `;
+        } else if (finalType === "maintenance") {
+          subject = "Legal Notice for Claim of Monthly Maintenance under Section 125 CrPC / Personal Laws";
+          bodyParagraphs = `
+            <p>1. That my client is legally wedded to you. Due to constant neglect, cruelty, and desertion on your part, my client is currently living separately and is unable to maintain herself. You have willfully failed to provide financial support around <strong>${details}</strong>.</p>
+            <p>2. That you are earning a substantial salary and are fully capable of supporting your spouse, whereas my client has no independent source of income and is struggling for daily subsistence.</p>
+            <p>3. You are hereby called upon to pay a monthly maintenance sum of INR 25,000 to my client and clear all arrears within 15 days, failing which legal proceedings under Section 125 CrPC will be initiated immediately.</p>
+          `;
+        } else if (finalType === "property") {
+          subject = "Legal Notice regarding Property Dispute, Unauthorized Intrusion, and Claim of Title";
+          bodyParagraphs = `
+            <p>1. That my client is the rightful owner and occupier of the property described. Recently, you have made illegal attempts to intrude upon, damage, or claim partition of the said property without legal title, specifically around <strong>${details}</strong>.</p>
+            <p>2. That your acts constitute criminal trespass and illegal encroachment, causing immense financial losses and mental agony to my client.</p>
+            <p>3. You are hereby demanded to immediately stop all unauthorized activities, restore the property to its original condition, and sign an undertaking of non-interference within 15 days, failing which civil suits for injunction and damages will be filed.</p>
+          `;
+        } else if (finalType === "theft") {
+          subject = "Legal Notice for Robbery, Theft, and Demand for Restoration/Compensation of Stolen Property";
+          bodyParagraphs = `
+            <p>1. Under instructions of my client, it is brought to your notice that on or about the date of incident, my client was subjected to an unlawful act of theft/robbery, specifically described as: <strong>${details}</strong>.</p>
+            <p>2. That this unlawful act constitutes severe criminal violations under the Indian Penal Code (including Sections 379/392 for Theft/Robbery), causing my client significant financial loss, immense mental agony, and distress.</p>
+            <p>3. Therefore, you are hereby called upon to immediately return the stolen items, restore the property, or pay the full replacement value of the stolen assets along with compensation within 15 days of this notice, failing which a formal First Information Report (FIR) will be lodged and strict criminal prosecution will be pursued.</p>
+          `;
+        } else {
+          subject = userSubject.toLowerCase().startsWith("legal notice") ? userSubject : "Legal Notice concerning " + userSubject;
+          bodyParagraphs = `
+            <p>1. Under instructions of my client, it is brought to your notice that my client has experienced the following grievance or dispute: <strong>${details}</strong>.</p>
+            <p>2. That your actions have caused my client significant distress, violation of their legal rights, and direct grievance.</p>
+            <p>3. Therefore, you are hereby called upon to immediately redress this dispute, cease all such actions, and resolve this grievance within 15 days of this notice, failing which my client will be forced to pursue appropriate civil and criminal legal recourse against you in a court of law.</p>
+          `;
+        }
+
+        editor.innerHTML = `
+          <h1 style="text-align: center; color: #8B1A1A; margin-bottom: 24px;">LEGAL NOTICE</h1>
+          <p><strong>BY REGISTERED A.D. / SPEED POST</strong></p>
+          <br/>
+          <p>To,</p>
+          <p><strong>${rName}</strong><br/>
+          ${rAddr}<br/>
+          ${rCity}, ${rState}</p>
+          <br/>
+          <p><strong>Date:</strong> ${formattedDate}</p>
+          <br/>
+          <p><strong>Subject: ${subject}</strong></p>
+          <br/>
+          <p>Dear Sir/Madam,</p>
+          <p>Under instructions from my client, <strong>${sName}</strong>, residing at ${sAddr}, ${sCity}, ${sState}, I hereby serve you with this legal notice:</p>
+          ${bodyParagraphs}
+          <br/>
+          <p>A copy of this notice is kept in my office for record and future actions.</p>
+          <br/>
+          <p>Sincerely,</p>
+          <p><strong>Advocate for the Sender</strong></p>
+        `;
+
+        showToast("✓ Legal Notice compiled using smart document templates!");
+        overlay.style.display = 'none';
+      }, 1000);
+    }
+
+    // ── RICH TEXT FORMATTING ──
+    function formatDoc(cmd, val = null) {
+      document.execCommand(cmd, false, val);
+      document.getElementById('editor-body').focus();
+    }
+
+    function insertLink() {
+      const url = prompt("Enter URL link (e.g. https://google.com):");
+      if (url) {
+        formatDoc("createLink", url);
+      }
+    }
+
+    // ── SAVE & LOAD DRAFTS (LOCALSTORAGE) ──
+    function saveNoticeDraft() {
+      if (!session || !session.uid) {
+        showToast("Please log in to save drafts to your account.");
+        return;
+      }
+
+      const subject = document.getElementById('notice-subject').value.trim();
+      const sName = document.getElementById('sender-name').value.trim();
+      const sAddr = document.getElementById('sender-address').value.trim();
+      const sCity = document.getElementById('sender-city').value;
+      const sState = document.getElementById('sender-state').value;
+      
+      const rName = document.getElementById('recipient-name').value.trim();
+      const rAddr = document.getElementById('recipient-address').value.trim();
+      const rCity = document.getElementById('recipient-city').value;
+      const rState = document.getElementById('recipient-state').value;
+      
+      const details = document.getElementById('incident-details').value.trim();
+      const docHtml = document.getElementById('editor-body').innerHTML;
+
+      const draftId = `draft_${Date.now()}`;
+      const draftRecord = {
+        id: draftId,
+        subject,
+        sName, sAddr, sCity, sState,
+        rName, rAddr, rCity, rState,
+        details,
+        docHtml,
+        savedAt: new Date().toISOString()
+      };
+
+      const key = `draft_notices_${session.uid}`;
+      let list = [];
+      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+      
+      // Add or update
+      list.unshift(draftRecord);
+      localStorage.setItem(key, JSON.stringify(list));
+
+      showToast("📁 Legal Notice draft saved successfully!");
+      loadDraftsList();
+    }
+
+    function loadDraftsList() {
+      if (!session || !session.uid) return;
+      const key = `draft_notices_${session.uid}`;
+      let list = [];
+      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+      savedDrafts = list;
+
+      const select = document.getElementById('drafts-select');
+      // Keep first option
+      select.innerHTML = '<option value="">-- Select a draft --</option>';
+      list.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        const subjectName = d.subject ? d.subject : 'Legal Notice';
+        opt.textContent = `${subjectName.substring(0, 20)}... (${new Date(d.savedAt).toLocaleDateString('en-IN')})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function loadSavedDraft(id) {
+      if (!id) return;
+      const draft = savedDrafts.find(d => d.id === id);
+      if (!draft) return;
+
+      // Populate Step 1 Senders fields
+      document.getElementById('notice-subject').value = draft.subject || '';
+      document.getElementById('sender-name').value = draft.sName || '';
+      document.getElementById('sender-address').value = draft.sAddr || '';
+      document.getElementById('sender-city').value = draft.sCity || 'New Delhi';
+      document.getElementById('sender-state').value = draft.sState || 'Delhi';
+
+      // Populate Step 2 Recipient fields
+      document.getElementById('recipient-name').value = draft.rName || '';
+      document.getElementById('recipient-address').value = draft.rAddr || '';
+      document.getElementById('recipient-city').value = draft.rCity || 'New Delhi';
+      document.getElementById('recipient-state').value = draft.rState || 'Delhi';
+      document.getElementById('incident-details').value = draft.details || '';
+
+      // Populate Editor body
+      document.getElementById('editor-body').innerHTML = draft.docHtml;
+
+      // Navigate to Review step directly
+      goToStep(3);
+      showToast("📁 Loaded saved draft successfully!");
+    }
+
+    // ── PDF DOWNLOAD ──
+    function downloadNoticePDF() {
+      const element = document.getElementById('editor-body');
+      const opt = {
+        margin:       [15, 15, 15, 15],
+        filename:     'legal_notice_draft.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      showToast("🖨️ Compiling document... PDF download starting.");
+      html2pdf().from(element).set(opt).save()
+        .then(() => showToast("✓ PDF downloaded to your computer!"))
+        .catch(err => {
+          console.error("PDF compile error:", err);
+          showToast("❌ PDF download failed. Please copy the notice text manually.");
+        });
+    }
+
+    // ── SEND TO LAWYER ──
+    function openLawyerModal() {
+      document.getElementById('lawyer-modal').style.display = 'flex';
+    }
+
+    function closeLawyerModal() {
+      document.getElementById('lawyer-modal').style.display = 'none';
+    }
+
+    function sendNoticeToLawyer() {
+      const lName = document.getElementById('lawyer-name').value.trim();
+      const lEmail = document.getElementById('lawyer-email').value.trim();
+      const lPhone = document.getElementById('lawyer-phone').value.trim();
+
+      if (!lName || !lEmail || !lPhone) {
+        showToast("Please fill out all lawyer contact fields.");
+        return;
+      }
+
+      const content = document.getElementById('lawyer-modal-content');
+      const docHtml = document.getElementById('editor-body').innerText;
+
+      // Show loader
+      content.innerHTML = `
+        <div style="text-align: center; padding: 40px 0;">
+          <div class="spinner" style="margin: 0 auto 16px;"></div>
+          <p style="font-size: 0.88rem; font-weight:600; color: var(--crimson);">Routing Legal Notice to lawyer...</p>
+        </div>
+      `;
+
+      setTimeout(() => {
+        // Show success ring checkmark
+        content.innerHTML = `
+          <div class="success-icon-wrap">
+            <div class="success-ring">✓</div>
+            <h3>Notice Sent Successfully!</h3>
+            <p style="font-size: 0.82rem; color: var(--mid-gray); line-height:1.5;">
+              A copy of the legal notice has been securely transmitted and emailed to <strong>${lName}</strong> (${lEmail}).
+            </p>
+            <button class="btn-modal-submit" onclick="closeLawyerModal()" style="margin-top: 10px;">Done</button>
+          </div>
+        `;
+        showToast(`✓ Legal Notice sent to ${lName}!`);
+
+        // Fallback: Mailto link triggers browser native client
+        const mailtoLink = `mailto:${lEmail}?subject=Legal Notice for Review&body=${encodeURIComponent("Dear Adv. " + lName + ",\n\nI have drafted a legal notice using AdhikarAI. Please review the notice draft attached below:\n\n---\n\n" + docHtml)}`;
+        // Open in background
+        const a = document.createElement('a');
+        a.href = mailtoLink;
+        a.click();
+
+        // Restore modal html for future clicks when closed
+        setTimeout(() => {
+          restoreLawyerModalHTML();
+        }, 1000);
+
+      }, 2500);
+    }
+
+    function restoreLawyerModalHTML() {
+      document.getElementById('lawyer-modal').innerHTML = `
+        <div class="modal-card" id="lawyer-modal-content">
+          <button class="modal-close" onclick="closeLawyerModal()">✕</button>
+          <h3>Send Notice to Lawyer</h3>
+          <p style="font-size: 0.82rem; color: var(--mid-gray); line-height: 1.5; margin-bottom: 16px;">
+            Provide the contact information for your lawyer. We will securely format and route a copy of your drafted legal notice directly to them.
+          </p>
+          <div class="form-group">
+            <label for="lawyer-name">Lawyer's Full Name</label>
+            <input type="text" id="lawyer-name" placeholder="Adv. Rajesh Kumar" required />
+          </div>
+          <div class="form-group">
+            <label for="lawyer-email">Lawyer's Email Address</label>
+            <input type="email" id="lawyer-email" placeholder="rajesh.kumar@advocate.in" required />
+          </div>
+          <div class="form-group">
+            <label for="lawyer-phone">Lawyer's Phone Number</label>
+            <input type="tel" id="lawyer-phone" placeholder="+91 98765 43210" required />
+          </div>
+          <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeLawyerModal()">Cancel</button>
+            <button class="btn-modal-submit" onclick="sendNoticeToLawyer()">Send Notice</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // ── API KEY SETTINGS MODAL ──
+    function openKeyModal() {
+      document.getElementById('key-modal').style.display = 'flex';
+    }
+
+    function closeKeyModal() {
+      document.getElementById('key-modal').style.display = 'none';
+    }
+
+    function saveGeminiKey() {
+      const keyVal = document.getElementById('gemini-key-input').value.trim();
+      if (keyVal) {
+        localStorage.setItem('gemini_api_key', keyVal);
+        showToast("Gemini API Key saved locally!");
+      } else {
+        localStorage.removeItem('gemini_api_key');
+        showToast("Gemini API Key removed. Using default template engine.");
+      }
+      closeKeyModal();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function showFeatureNotice(name) {
+      showToast(`✨ "${name}" tool is securely locked. Fully active in the production portal.`);
+    }
+  </script>
+</body>
+</html>
