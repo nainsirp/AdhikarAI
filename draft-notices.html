@@ -367,10 +367,11 @@
       display: flex;
       gap: 12px;
       margin-top: 24px;
+      flex-wrap: wrap;
     }
     .editor-actions .btn {
-      flex: 1;
-      padding: 11px 0;
+      flex: 1 1 140px;
+      padding: 11px 16px;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -381,6 +382,7 @@
       justify-content: center;
       gap: 8px;
       font-family: var(--font-main);
+      white-space: nowrap;
     }
     .btn-save-draft {
       background: var(--white);
