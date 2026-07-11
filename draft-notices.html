@@ -777,22 +777,15 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="sender-city">City</label>
-                <select id="sender-city">
-                  <option value="New Delhi">New Delhi</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Bangalore">Bangalore</option>
-                  <option value="Chennai">Chennai</option>
-                  <option value="Kolkata">Kolkata</option>
+                <select id="sender-city" onchange="handleCityChange('sender')">
+                  <option value="">Select City</option>
                 </select>
+                <input type="text" id="sender-city-other" placeholder="Enter city name" style="display: none; margin-top: 8px;" />
               </div>
               <div class="form-group">
                 <label for="sender-state">State</label>
-                <select id="sender-state">
-                  <option value="Delhi">Delhi</option>
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Tamil Nadu">Tamil Nadu</option>
-                  <option value="West Bengal">West Bengal</option>
+                <select id="sender-state" onchange="populateCities('sender', this.value)">
+                  <option value="">Select State</option>
                 </select>
               </div>
             </div>
@@ -814,22 +807,15 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="recipient-city">City</label>
-                <select id="recipient-city">
-                  <option value="New Delhi">New Delhi</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Bangalore">Bangalore</option>
-                  <option value="Chennai">Chennai</option>
-                  <option value="Kolkata">Kolkata</option>
+                <select id="recipient-city" onchange="handleCityChange('recipient')">
+                  <option value="">Select City</option>
                 </select>
+                <input type="text" id="recipient-city-other" placeholder="Enter city name" style="display: none; margin-top: 8px;" />
               </div>
               <div class="form-group">
                 <label for="recipient-state">State</label>
-                <select id="recipient-state">
-                  <option value="Delhi">Delhi</option>
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Tamil Nadu">Tamil Nadu</option>
-                  <option value="West Bengal">West Bengal</option>
+                <select id="recipient-state" onchange="populateCities('recipient', this.value)">
+                  <option value="">Select State</option>
                 </select>
               </div>
             </div>
@@ -1040,11 +1026,15 @@
         });
       }
 
-      // Load API key from local storage if saved
-      const savedKey = localStorage.getItem('gemini_api_key');
-      if (savedKey) {
-        document.getElementById('gemini-key-input').value = savedKey;
-      }
+      // Initialize states and default cities
+      initializeStates();
+      document.getElementById('sender-state').value = 'Delhi';
+      populateCities('sender', 'Delhi');
+      document.getElementById('sender-city').value = 'New Delhi';
+
+      document.getElementById('recipient-state').value = 'Delhi';
+      populateCities('recipient', 'Delhi');
+      document.getElementById('recipient-city').value = 'New Delhi';
 
       // Load saved drafts list
       loadDraftsList();
@@ -1104,12 +1094,18 @@
       const userSubject = document.getElementById('notice-subject').value.trim();
       const sName = document.getElementById('sender-name').value.trim();
       const sAddr = document.getElementById('sender-address').value.trim();
-      const sCity = document.getElementById('sender-city').value;
+      let sCity = document.getElementById('sender-city').value;
+      if (sCity === 'Other') {
+        sCity = document.getElementById('sender-city-other').value.trim() || 'Other';
+      }
       const sState = document.getElementById('sender-state').value;
       
       const rName = document.getElementById('recipient-name').value.trim();
       const rAddr = document.getElementById('recipient-address').value.trim();
-      const rCity = document.getElementById('recipient-city').value;
+      let rCity = document.getElementById('recipient-city').value;
+      if (rCity === 'Other') {
+        rCity = document.getElementById('recipient-city-other').value.trim() || 'Other';
+      }
       const rState = document.getElementById('recipient-state').value;
       
       const details = document.getElementById('incident-details').value.trim();
@@ -1293,12 +1289,18 @@
       const subject = document.getElementById('notice-subject').value.trim();
       const sName = document.getElementById('sender-name').value.trim();
       const sAddr = document.getElementById('sender-address').value.trim();
-      const sCity = document.getElementById('sender-city').value;
+      let sCity = document.getElementById('sender-city').value;
+      if (sCity === 'Other') {
+        sCity = document.getElementById('sender-city-other').value.trim() || 'Other';
+      }
       const sState = document.getElementById('sender-state').value;
       
       const rName = document.getElementById('recipient-name').value.trim();
       const rAddr = document.getElementById('recipient-address').value.trim();
-      const rCity = document.getElementById('recipient-city').value;
+      let rCity = document.getElementById('recipient-city').value;
+      if (rCity === 'Other') {
+        rCity = document.getElementById('recipient-city-other').value.trim() || 'Other';
+      }
       const rState = document.getElementById('recipient-state').value;
       
       const details = document.getElementById('incident-details').value.trim();
@@ -1338,7 +1340,7 @@
       // Keep first option
       select.innerHTML = '<option value="">-- Select a draft --</option>';
       list.forEach(d => {
-        const opt = document.createElement('option');
+          const opt = document.createElement('option');
         opt.value = d.id;
         const subjectName = d.subject ? d.subject : 'Legal Notice';
         opt.textContent = `${subjectName.substring(0, 20)}... (${new Date(d.savedAt).toLocaleDateString('en-IN')})`;
@@ -1355,14 +1357,59 @@
       document.getElementById('notice-subject').value = draft.subject || '';
       document.getElementById('sender-name').value = draft.sName || '';
       document.getElementById('sender-address').value = draft.sAddr || '';
-      document.getElementById('sender-city').value = draft.sCity || 'New Delhi';
-      document.getElementById('sender-state').value = draft.sState || 'Delhi';
+      
+      const sState = draft.sState || 'Delhi';
+      document.getElementById('sender-state').value = sState;
+      populateCities('sender', sState);
+      
+      const sCity = draft.sCity || 'New Delhi';
+      const senderCitySelect = document.getElementById('sender-city');
+      const senderCityOther = document.getElementById('sender-city-other');
+      let sCityExists = false;
+      for (let i = 0; i < senderCitySelect.options.length; i++) {
+        if (senderCitySelect.options[i].value === sCity) {
+          sCityExists = true;
+          break;
+        }
+      }
+      if (sCityExists) {
+        senderCitySelect.value = sCity;
+        senderCityOther.style.display = 'none';
+        senderCityOther.value = '';
+      } else {
+        senderCitySelect.value = 'Other';
+        senderCityOther.style.display = 'block';
+        senderCityOther.value = sCity;
+      }
 
       // Populate Step 2 Recipient fields
       document.getElementById('recipient-name').value = draft.rName || '';
       document.getElementById('recipient-address').value = draft.rAddr || '';
-      document.getElementById('recipient-city').value = draft.rCity || 'New Delhi';
-      document.getElementById('recipient-state').value = draft.rState || 'Delhi';
+      
+      const rState = draft.rState || 'Delhi';
+      document.getElementById('recipient-state').value = rState;
+      populateCities('recipient', rState);
+      
+      const rCity = draft.rCity || 'New Delhi';
+      const recipientCitySelect = document.getElementById('recipient-city');
+      const recipientCityOther = document.getElementById('recipient-city-other');
+      let rCityExists = false;
+      for (let i = 0; i < recipientCitySelect.options.length; i++) {
+        if (recipientCitySelect.options[i].value === rCity) {
+          rCityExists = true;
+          break;
+        }
+      }
+      if (rCityExists) {
+        recipientCitySelect.value = rCity;
+        recipientCityOther.style.display = 'none';
+        recipientCityOther.value = '';
+      } else {
+        recipientCitySelect.value = 'Other';
+        recipientCityOther.style.display = 'block';
+        recipientCityOther.value = rCity;
+      }
+      
       document.getElementById('incident-details').value = draft.details || '';
 
       // Populate Editor body
@@ -1512,6 +1559,106 @@
 
     function showFeatureNotice(name) {
       showToast(`✨ "${name}" tool is securely locked. Fully active in the production portal.`);
+    }
+
+    // ── INDIAN STATES & CITIES DATA AND HELPERS ──
+    const stateCities = {
+      "Andaman & Nicobar Islands": ["Port Blair"],
+      "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Tirupati", "Rajahmundry", "Kakinada", "Kadapa", "Anantapur", "Eluru", "Ongole"],
+      "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Namsai", "Tawang"],
+      "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon"],
+      "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga", "Bihar Sharif", "Arrah", "Begusarai", "Katihar", "Munger"],
+      "Chandigarh": ["Chandigarh"],
+      "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Rajnandgaon", "Jagdalpur", "Ambikapur", "Dhamtari"],
+      "Dadra & Nagar Haveli and Daman & Diu": ["Daman", "Diu", "Silvassa"],
+      "Delhi": ["New Delhi", "Delhi City", "Dwarka", "Rohini", "Noida (NCR)", "Gurugram (NCR)", "Faridabad (NCR)", "Ghaziabad (NCR)"],
+      "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
+      "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Junagadh", "Gandhinagar", "Anand", "Nadiad", "Morbi", "Surendranagar"],
+      "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula"],
+      "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Bilaspur", "Kullu", "Chamba", "Hamirpur"],
+      "Jammu & Kashmir": ["Srinagar", "Jammu", "Anantnag", "Baramulla", "Kathua", "Sopore", "Sambha"],
+      "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro Steel City", "Deoghar", "Hazaribagh", "Giridih", "Ramgarh", "Phusro"],
+      "Karnataka": ["Bengaluru", "Hubballi-Dharwad", "Mysuru", "Kalaburagi", "Belagavi", "Mangaluru", "Davanagere", "Ballari", "Shivamogga", "Tumakuru"],
+      "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Kollam", "Thrissur", "Alappuzha", "Palakkad", "Kannur", "Kottayam"],
+      "Ladakh": ["Leh", "Kargil"],
+      "Lakshadweep": ["Kavaratti", "Minicoy", "Amini"],
+      "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Dewas", "Satna", "Ratlam", "Rewa", "Murwara"],
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Pimpri-Chinchwad", "Nashik", "Kalyan-Dombivli", "Vasai-Virar", "Chhatrapati Sambhajinagar", "Navi Mumbai", "Solapur", "Amravati", "Kolhapur", "Akola"],
+      "Manipur": ["Imphal", "Thoubal", "Kakching", "Ukhrul"],
+      "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh"],
+      "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Serchhip"],
+      "Nagaland": ["Dimapur", "Kohima", "Mokokchung", "Tuensang"],
+      "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada"],
+      "Puducherry": ["Puducherry", "Karaikal", "Mahe", "Yanam"],
+      "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Sahibzada Ajit Singh Nagar", "Hoshiarpur", "Pathankot"],
+      "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur", "Bhilwara", "Alwar", "Sikar", "Bharatpur", "Sri Ganganagar"],
+      "Sikkim": ["Gangtok", "Namchi", "Geyzing", "Mangan"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tiruppur", "Erode", "Vellore", "Thoothukudi", "Tirunelveli", "Nagercoil"],
+      "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Ramagundam", "Khammam", "Mahbubnagar", "Nalgonda"],
+      "Tripura": ["Agartala", "Dharmanagar", "Udaipur", "Kailasahar"],
+      "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Meerut", "Varanasi", "Prayagraj", "Bareilly", "Aligarh", "Noida", "Moradabad", "Gorakhpur", "Firozabad", "Jhansi", "Muzaffarnagar"],
+      "Uttarakhand": ["Dehradun", "Haridwar", "Haldwani", "Roorkee", "Rudrapur", "Kashipur", "Rishikesh"],
+      "West Bengal": ["Kolkata", "Howrah", "Siliguri", "Asansol", "Durgapur", "Bardhaman", "Malda", "Kharagpur", "Baharampur", "Jalpaiguri"]
+    };
+
+    function initializeStates() {
+      const senderStateSelect = document.getElementById('sender-state');
+      const recipientStateSelect = document.getElementById('recipient-state');
+      
+      const states = Object.keys(stateCities).sort();
+      
+      senderStateSelect.innerHTML = '<option value="">Select State</option>';
+      recipientStateSelect.innerHTML = '<option value="">Select State</option>';
+      
+      states.forEach(state => {
+        const optSender = document.createElement('option');
+        optSender.value = state;
+        optSender.textContent = state;
+        senderStateSelect.appendChild(optSender);
+        
+        const optRecipient = document.createElement('option');
+        optRecipient.value = state;
+        optRecipient.textContent = state;
+        recipientStateSelect.appendChild(optRecipient);
+      });
+    }
+
+    function populateCities(type, stateVal) {
+      const citySelect = document.getElementById(`${type}-city`);
+      const cityOther = document.getElementById(`${type}-city-other`);
+      
+      citySelect.innerHTML = '<option value="">Select City</option>';
+      cityOther.style.display = 'none';
+      cityOther.value = '';
+      
+      if (!stateVal || !stateCities[stateVal]) {
+        return;
+      }
+      
+      const cities = stateCities[stateVal];
+      cities.forEach(city => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+      });
+      
+      const otherOpt = document.createElement('option');
+      otherOpt.value = 'Other';
+      otherOpt.textContent = 'Other (Type below)';
+      citySelect.appendChild(otherOpt);
+    }
+
+    function handleCityChange(type) {
+      const citySelect = document.getElementById(`${type}-city`);
+      const cityOther = document.getElementById(`${type}-city-other`);
+      if (citySelect.value === 'Other') {
+        cityOther.style.display = 'block';
+        cityOther.focus();
+      } else {
+        cityOther.style.display = 'none';
+        cityOther.value = '';
+      }
     }
   </script>
 </body>
