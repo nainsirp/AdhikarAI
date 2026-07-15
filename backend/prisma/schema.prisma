@@ -1,12 +1,10 @@
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  extensions = [pgvector]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+  provider = "prisma-client-js"
 }
 
 enum Role {
@@ -63,7 +61,7 @@ model DocumentEmbedding {
   evidenceId  String
   evidence    Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
   chunkText   String
-  embedding   Unsupported("vector(768)") // pgvector embedding field
+  embedding   Float[] // vector embedding array
 }
 
 model ChatSession {
