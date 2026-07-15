@@ -2,7 +2,6 @@
 
 AdhikarAI is a simple, easy-to-use tool built to help women navigate the Indian legal system. The law can feel scary and full of hard words, so this project is made to explain things in plain, everyday language (including regional languages) and give women the confidence they need.
 
-Live website link: [https://nainsirp.github.io/AdhikarAI/](https://nainsirp.github.io/AdhikarAI/)
 
 ---
 
