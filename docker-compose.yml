@@ -22,16 +22,8 @@ services:
     restart: always
     ports:
       - "5000:5000"
-    environment:
-      - PORT=5000
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/adhikarai?schema=public
-      - JWT_ACCESS_SECRET=super_secret_jwt_access_token_key_123456789
-      - JWT_REFRESH_SECRET=super_secret_jwt_refresh_token_key_123456789
-      - CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-      - CLOUDINARY_API_KEY=your_cloudinary_api_key
-      - CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-      - GEMINI_API_KEY=your_gemini_api_key
+    env_file:
+      - ./backend/.env
     depends_on:
       - postgres
 
