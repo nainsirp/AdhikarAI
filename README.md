@@ -122,13 +122,13 @@ Supports
                                        │               │               │
                                        ▼               ▼               ▼
                                   PostgreSQL        Google Gemini      File Storage
-                                                       │
-                                                       ▼
-                                                   Prisma ORM
-                                                       │
-                                                       ▼
-                                                    pgvector
-                                             (Vector Search / RAG)
+                                       │
+                                       ▼
+                                  Prisma ORM
+                                       │
+                                       ▼
+                                    pgvector
+                              (Vector Search / RAG)
 ```
 
 ---
